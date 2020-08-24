@@ -11,7 +11,7 @@ import dateutil.parser
 import beacons_ids
 from db_handler import connect_db, read_db
 
-threshold_beacons = 10  # in seconds
+threshold_beacons = 60  # in seconds
 
 
 def beacons_control():
