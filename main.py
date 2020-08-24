@@ -38,16 +38,10 @@ def beacons_control():
         # check that the index is among those to track
         if row[0] in beacons_ids.beacons_to_track.keys():
 
-            print((
-                dt.datetime.now() - dateutil.parser.parse(row[2])
-            ).total_seconds() )
-
             # check against time threshold
             if ((
                 dt.datetime.now() - dateutil.parser.parse(row[2])
             ).total_seconds() < threshold_beacons):
-
-                print("time has not elapsed")
 
                 # if not enough time has elapsed check signal strength
                 if row[1] < beacons_ids.beacons_to_track[row[0]]:
@@ -57,11 +51,16 @@ def beacons_control():
             # if the threshold time has elapsed
             else:
 
+                print("time elapsed")
+
                 top_light_beacon_array[ix] = True
                 desk_light_beacon_array[ix] = True
 
         # since I am not controlling for this beacon
         else:
+
+            print("other beacon")
+
             top_light_beacon_array[ix] = True
             desk_light_beacon_array[ix] = True
 
