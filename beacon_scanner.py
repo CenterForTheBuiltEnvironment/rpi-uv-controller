@@ -1,86 +1,14 @@
 # nvim configuration http://vim.fisadev.com/#features-and-help
 
 from bluepy.btle import Scanner, DefaultDelegate
-import sqlite3
-from sqlite3 import Error
-import datetime
+import datetime as dt
 
-from beacons_ids import beacons_to_track
-
-beacons_to_track = [beacon_id.lower() for beacon_id in beacons_to_track.keys()]
-
-
-def create_connection(db_file):
-    """ create a database connection to the SQLite database
-        specified by db_file
-    :param db_file: database file
-    :return: Connection object or None
-    """
-    conn = None
-    try:
-        conn = sqlite3.connect(db_file)
-        return conn
-    except Error as e:
-        print("could not connect to the db")
-        print(e)
-
-    return conn
-
-
-def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
-    try:
-        c = conn.cursor()
-        c.execute(create_table_sql)
-    except Error as e:
-        print("could not create a table")
-        print(e)
-
-
-def add_entry(conn, data):
-    """
-    Create a new entry into the beacons table
-    :param conn:
-    :param data:
-    :return: project id
-    """
-    sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
-              VALUES(?,?,?) """
-    cur = conn.cursor()
-    cur.execute(sql, data)
-    conn.commit()
-    return cur.lastrowid
-
-
-sql_create_beacons_table = (
-    "CREATE TABLE IF NOT EXISTS beacons "
-    "( id integer PRIMARY KEY, "
-    "device_id text NOT NULL, "
-    "time_stamp text, "
-    "rssi int)"
-)
-
-connection = create_connection("database.db")
-
-# create tables
-if connection is not None:
-    # create projects table
-    create_table(connection, sql_create_beacons_table)
-else:
-    print("Error! cannot create the database connection.")
-
-# # add one entry
-# reading = ("aa:bb", datetime.datetime.now().isoformat(), -20)
-# index = add_entry(connection, reading)
-
-# conn.close()
+import beacons_ids
+import db_handler
 
 # BLE Scanning class
 class ScanDelegate(DefaultDelegate):
+
     def __init__(self):
         DefaultDelegate.__init__(self)
 
@@ -91,40 +19,46 @@ class ScanDelegate(DefaultDelegate):
     #         print ("Received new data from:", dev.addr)
 
 
-# initialize the scanner
-scanner = Scanner().withDelegate(ScanDelegate())
+def main():
 
-# Main Loop that scans for the beacons
-i = 0
+    # change the IDs to lowercase
+    beacons_to_track = [x.lower() for x in beacons_ids.beacons_to_track.keys()]
 
-while i < 1:
-    #   i = i + 1
-    #   print(time.time())
-    print("Scanning ... ")
-    devices = scanner.scan(5.0)
-    # print("Finished scan for devices")
+    # create the table
+    db_handler.create_beacons_table()
 
-    for dev in devices:
+    # # add some fake readings
+    # db_handler.add_fake_beacons_reading("aa:aa:aa", -20, "database.db")
 
-        # for (adtype, desc, value) in dev.getScanData():
+    # initialize the scanner
+    scanner = Scanner().withDelegate(ScanDelegate())
 
-        # print(adtype, desc, value)
-        # print(dev.addr)
+    # Main Loop that scans for the beacons
+    while True:
 
-        if dev.addr in beacons_to_track:
+        print("Scanning ... ")
+        devices = scanner.scan(5.0)
 
-            print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
+        conn = db_handler.connect_db()
 
-            reading = (dev.addr, datetime.datetime.now().isoformat(), dev.rssi)
+        for dev in devices:
 
-            index = add_entry(connection, reading)
+            if dev.addr in beacons_to_track:
 
-            print(f"index new entry: {index}")
+                print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
 
-            # if ((desc == 'Complete Local Name') & (value == "ESP32")):
-            # print(desc, value)
-            # ID=str(dev.addr)
-            # print('ID (MAC addr): %s' % (ID))
-            # MQTTID=ID.replace(":","")
+                values = (dev.addr, dt.datetime.now().isoformat(), dev.rssi)
 
-# todo implement a function that deletes old records
+                sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
+                          VALUES(?,?,?) """
+
+                index = db_handler.write_db(conn, sql, values)
+
+                print(f"index new entry: {index}")
+
+        conn.close()
+
+    # todo implement a function that deletes old records
+
+if __name__ == '__main__':
+    main()
