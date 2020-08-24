@@ -85,11 +85,13 @@ while True:
 
     ctr_beacon = beacons_control()
 
+    print("beacon control", ctr_beacon)
+
     if ctr_beacon['desk_light']:
         GPIO.output(26, 1)
     elif ctr_beacon['top_light']:
-        GPIO.output(19, 0)
+        GPIO.output(19, 1)
     else:
-        GPIO.output(13, 0)
+        GPIO.output(13, 1)
 
     time.sleep(5)
