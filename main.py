@@ -10,7 +10,6 @@ import dateutil.parser
 
 import beacons_ids
 from db_handler import connect_db, read_db
-import beacon_scanner
 
 threshold_beacons = 10  # in seconds
 
@@ -79,8 +78,6 @@ GPIO.setup(26, GPIO.OUT)  # green
 GPIO.setup(19, GPIO.OUT)  # yellow
 GPIO.setup(13, GPIO.OUT)  # red
 
-beacon_scanner.scan_beacons()
-
 while True:
 
     ctr_beacon = beacons_control()
@@ -89,9 +86,15 @@ while True:
 
     if ctr_beacon['desk_light']:
         GPIO.output(26, 1)
+        GPIO.output(19, 0)
+        GPIO.output(13, 0)
     elif ctr_beacon['top_light']:
+        GPIO.output(26, 0)
         GPIO.output(19, 1)
+        GPIO.output(13, 0)
     else:
+        GPIO.output(26, 0)
+        GPIO.output(19, 0)
         GPIO.output(13, 1)
 
     time.sleep(5)
