@@ -5,6 +5,10 @@ import sqlite3
 from sqlite3 import Error
 import datetime
 
+from beacons_ids import beacons_to_track
+
+beacons_to_track = [beacon_id.lower() for beacon_id in beacons_to_track.keys()]
+
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -107,10 +111,9 @@ while i < 1:
         # print(adtype, desc, value)
         # print(dev.addr)
 
-        if dev.addr == ("DA:f7:89:c4:54:5f").lower():
+        if dev.addr in beacons_to_track:
 
-            print("beacon in range")
-            print(dev.addr, dev.rssi)
+            print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
 
             reading = (dev.addr, datetime.datetime.now().isoformat(), dev.rssi)
 
@@ -123,3 +126,5 @@ while i < 1:
             # ID=str(dev.addr)
             # print('ID (MAC addr): %s' % (ID))
             # MQTTID=ID.replace(":","")
+
+# todo implement a function that deletes old records
