@@ -35,15 +35,19 @@ def beacons_control():
 
     for ix, row in enumerate(rows):
 
-        print(row)
-
         # check that the index is among those to track
         if row[0] in beacons_ids.beacons_to_track.keys():
 
-            # check against time threshold
-            if (
+            print((
                 dt.datetime.now() - dateutil.parser.parse(row[2])
-            ).total_seconds() < threshold_beacons:
+            ).total_seconds() )
+
+            # check against time threshold
+            if ((
+                dt.datetime.now() - dateutil.parser.parse(row[2])
+            ).total_seconds() < threshold_beacons):
+
+                print("time has not elapsed")
 
                 # if not enough time has elapsed check signal strength
                 if row[1] < beacons_ids.beacons_to_track[row[0]]:
