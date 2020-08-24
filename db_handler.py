@@ -93,9 +93,9 @@ def main():
     # rows =  read_db(conn, query)
 
     # query only last entry by beacon id
-    query_last_entry_by_id = "SELECT device_id, rssi, MAX(time_stamp) " \
-                             "FROM beacons " \
-                             "GROUP BY device_id;"
+    query_last_entry_by_id = (
+        "SELECT device_id, rssi, MAX(time_stamp) " "FROM beacons " "GROUP BY device_id;"
+    )
     rows = read_db(conn, query_last_entry_by_id)
 
     for row in rows:
@@ -104,5 +104,5 @@ def main():
     conn.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

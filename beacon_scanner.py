@@ -8,7 +8,6 @@ import db_handler
 
 # BLE Scanning class
 class ScanDelegate(DefaultDelegate):
-
     def __init__(self):
         DefaultDelegate.__init__(self)
 
@@ -19,10 +18,7 @@ class ScanDelegate(DefaultDelegate):
     #         print ("Received new data from:", dev.addr)
 
 
-def main():
-
-    # change the IDs to lowercase
-    beacons_to_track = [x.lower() for x in beacons_ids.beacons_to_track.keys()]
+def scan_beacons():
 
     # create the table
     db_handler.create_beacons_table()
@@ -43,7 +39,7 @@ def main():
 
         for dev in devices:
 
-            if dev.addr in beacons_to_track:
+            if dev.addr in beacons_ids.beacons_to_track.keys():
 
                 print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
 
@@ -60,5 +56,6 @@ def main():
 
     # todo implement a function that deletes old records
 
-if __name__ == '__main__':
-    main()
+
+if __name__ == "__main__":
+    scan_beacons()

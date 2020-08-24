@@ -6,8 +6,11 @@ while the values are the rssi threshold for that beacon.
 
 With the rssi threshold decreasing as the BLE beacon moves away.
 The rssi values are negative values.
+
+The ids should be lowercase
 """
 
 beacons_to_track = {
-    "DA:f7:89:c4:54:5f": -90,
-    }
+    "da:f7:89:c4:54:5f": -50,
+    "dd:bb:cc": -10,
+}
