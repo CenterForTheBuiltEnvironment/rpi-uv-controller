@@ -28,11 +28,14 @@ def beacons_control():
     conn.close()
 
     zeros_array = np.zeros(len(rows))
+    zeros_array[:] = False
 
     top_light_beacon_array = zeros_array
     desk_light_beacon_array = zeros_array
 
     for ix, row in enumerate(rows):
+
+        print(row)
 
         # check that the index is among those to track
         if row[0] in beacons_ids.beacons_to_track.keys():
@@ -57,6 +60,9 @@ def beacons_control():
         else:
             top_light_beacon_array[ix] = True
             desk_light_beacon_array[ix] = True
+
+    print(top_light_beacon_array)
+    print(desk_light_beacon_array)
 
     if False in top_light_beacon_array:
         top_light_control = False
@@ -97,4 +103,4 @@ while True:
         GPIO.output(19, 0)
         GPIO.output(13, 1)
 
-    time.sleep(5)
+    time.sleep(10)
