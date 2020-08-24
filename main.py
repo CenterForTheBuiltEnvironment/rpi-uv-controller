@@ -76,6 +76,8 @@ def beacons_control():
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
+# https://pinout.xyz
+
 GPIO.setup(26, GPIO.OUT)  # green
 GPIO.setup(19, GPIO.OUT)  # yellow
 GPIO.setup(13, GPIO.OUT)  # red
