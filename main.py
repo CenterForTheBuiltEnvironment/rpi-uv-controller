@@ -8,7 +8,7 @@ from db_handler import connect_db, read_db
 import time
 
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(26,GPIO.OUT)     #Define pin 3 as an output pin
 GPIO.setup(19,GPIO.OUT)     #Define pin 3 as an output pin
