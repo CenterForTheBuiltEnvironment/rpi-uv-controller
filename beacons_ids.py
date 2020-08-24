@@ -9,5 +9,5 @@ The rssi values are negative values.
 """
 
 beacons_to_track = {
-    "DA:f7:89:c4:54:5f": -60,
+    "DA:f7:89:c4:54:5f": -90,
     }
