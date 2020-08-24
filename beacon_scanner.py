@@ -2,6 +2,7 @@
 
 from bluepy.btle import Scanner, DefaultDelegate
 import sqlite3
+from sqlite3 import Error
 import datetime
 
 
@@ -15,8 +16,9 @@ def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
         return conn
-    except:
-        print("could not connect")
+    except Error as e:
+        print("could not connect to the db")
+        print(e)
 
     return conn
 
@@ -30,8 +32,9 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
-    except:
+    except Error as e:
         print("could not create a table")
+        print(e)
 
 
 def add_entry(conn, data):
@@ -63,11 +66,12 @@ connection = create_connection("database.db")
 if connection is not None:
     # create projects table
     create_table(connection, sql_create_beacons_table)
-
-    # create tasks table
-    create_table(connection, sql_create_beacons_table)
 else:
     print("Error! cannot create the database connection.")
+
+# # add one entry
+# reading = ("aa:bb", datetime.datetime.now().isoformat(), -20)
+# index = add_entry(connection, reading)
 
 # conn.close()
 
