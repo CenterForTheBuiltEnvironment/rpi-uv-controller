@@ -30,8 +30,8 @@ def beacons_control():
     zeros_array = np.zeros(len(rows))
     zeros_array[:] = False
 
-    top_light_beacon_array = zeros_array
-    desk_light_beacon_array = zeros_array
+    top_light_beacon_array = zeros_array.copy()
+    desk_light_beacon_array = zeros_array.copy()
 
     for ix, row in enumerate(rows):
 
@@ -51,21 +51,14 @@ def beacons_control():
             # if the threshold time has elapsed
             else:
 
-                print("time elapsed")
-
                 top_light_beacon_array[ix] = True
                 desk_light_beacon_array[ix] = True
 
         # since I am not controlling for this beacon
         else:
 
-            print("other beacon")
-
             top_light_beacon_array[ix] = True
             desk_light_beacon_array[ix] = True
-
-    print(top_light_beacon_array)
-    print(desk_light_beacon_array)
 
     if False in top_light_beacon_array:
         top_light_control = False
