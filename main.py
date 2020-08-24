@@ -2,6 +2,30 @@
 
 from bluepy.btle import Scanner, DefaultDelegate
 import time
+import sqlite3
+import datetime
+import sys
+
+# Connection to the local database
+conn = sqlite3.connect("database.db")
+
+# Create a cursor
+c = conn.cursor()
+
+try:
+    c.execute("""CREATE TABLE beacons (
+            time_stamp text,
+            device_id text,
+            rssi integer,
+            )
+            """)
+    conn.commit()
+
+    print("table successfully created")
+except:
+    print(sys.exc_info()[0])
+
+# conn.close()
 
 # BLE Scanning class
 class ScanDelegate(DefaultDelegate):
@@ -41,6 +65,13 @@ while i < 1:
         if dev.addr == ('DA:f7:89:c4:54:5f').lower():
 
             print("beacon in range")
+            print(dev.addr, dev.addrType, dev.rssi)
+
+            now = datetime.datetime.now().isoformat()
+
+            c.execute(f"INSERT INTO beacons VALUES ( '2020-08-24T11:12:31', 'aa:bb', 20)")
+
+            c.commit()
 
             #if ((desc == 'Complete Local Name') & (value == "ESP32")):
                 # print(desc, value)
