@@ -22,7 +22,7 @@ def pir_control():
 
     # query only last entry by beacon id
     query_last_entry_by_id = (
-        "SELECT * FROM rpi ORDER BY time_stamp DESC LIMIT 10"
+        "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
     )
     rows = read_db(conn, query_last_entry_by_id)
 
