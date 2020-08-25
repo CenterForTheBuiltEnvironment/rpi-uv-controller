@@ -1,10 +1,11 @@
 #!/bin/sh
 # pull request to update files
+echo "Pull request"
 git pull &
 pid=$!
 wait $pid
 
+echo "Starting python scripts"
 # start beacon scanner
 sudo python3 beacon_scanner.py &
-idBeaconScanner=$!
-echo idBeaconScanner
+sudo python3 pir_sensor.py &
