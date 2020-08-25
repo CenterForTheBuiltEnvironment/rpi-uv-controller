@@ -26,6 +26,13 @@ def pir_control():
 
     conn.close()
 
+    occupancy_array = [row[2] for row in rows]
+
+    if 1 in occupancy_array:
+        return False
+    else:
+        return True
+
 
 def beacons_control():
 
@@ -96,17 +103,23 @@ GPIO.setup(13, GPIO.OUT)  # red
 while True:
 
     ctr_beacon = beacons_control()
+    ctr_pir = pir_control()
 
     print("beacon control", ctr_beacon)
 
-    if ctr_beacon["desk_light"]:
-        GPIO.output(26, 1)
-        GPIO.output(19, 0)
-        GPIO.output(13, 0)
-    elif ctr_beacon["top_light"]:
-        GPIO.output(26, 0)
-        GPIO.output(19, 1)
-        GPIO.output(13, 0)
+    if ctr_pir:
+        if ctr_beacon["desk_light"]:
+            GPIO.output(26, 1)
+            GPIO.output(19, 0)
+            GPIO.output(13, 0)
+        elif ctr_beacon["top_light"]:
+            GPIO.output(26, 0)
+            GPIO.output(19, 1)
+            GPIO.output(13, 0)
+        else:
+            GPIO.output(26, 0)
+            GPIO.output(19, 0)
+            GPIO.output(13, 1)
     else:
         GPIO.output(26, 0)
         GPIO.output(19, 0)

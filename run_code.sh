@@ -9,3 +9,4 @@ echo "Starting python scripts"
 # start beacon scanner
 sudo python3 beacon_scanner.py &
 sudo python3 pir_sensor.py &
+sudo python3 light_controller.py &
