@@ -16,7 +16,7 @@ motion_array = []
 db_handler.create_pir_table()
 
 sql = """ INSERT INTO pir(time_stamp, presence)
-          VALUES(?,?,?) """
+          VALUES(?,?) """
 
 while True:
 
