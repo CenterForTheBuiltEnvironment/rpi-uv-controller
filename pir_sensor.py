@@ -29,7 +29,7 @@ while True:
 
         print("motion detected")
 
-        values = (dt.datetime.now().isoformat(), 1)
+        values = (int(time.time()) , 1)
 
         conn = db_handler.connect_db()
         index = db_handler.write_db(conn, sql, values)
@@ -42,9 +42,9 @@ while True:
         conn = db_handler.connect_db()
 
         if True in motion_array:
-            values = (dt.datetime.now().isoformat(), 1)
+            values = (int(time.time()) , 1)
         else:
-            values = (dt.datetime.now().isoformat(), 0)
+            values = (int(time.time()) , 0)
 
         index = db_handler.write_db(conn, sql, values)
         conn.close()

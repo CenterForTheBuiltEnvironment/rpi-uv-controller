@@ -1,8 +1,7 @@
 # nvim configuration http://vim.fisadev.com/#features-and-help
 
 from bluepy.btle import Scanner, DefaultDelegate
-import datetime as dt
-
+import time
 import beacons_ids
 import db_handler
 
@@ -43,7 +42,7 @@ def scan_beacons():
 
                 print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
 
-                values = (dev.addr, dt.datetime.now().isoformat(), dev.rssi)
+                values = (dev.addr, int(time.time()), dev.rssi)
 
                 sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
                           VALUES(?,?,?) """

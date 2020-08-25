@@ -5,8 +5,6 @@ This file contains the control logic
 import RPi.GPIO as GPIO
 import time
 import numpy as np
-import datetime as dt
-import dateutil.parser
 
 import beacons_ids
 from db_handler import connect_db, read_db
@@ -55,9 +53,7 @@ def beacons_control():
         if row[0] in beacons_ids.beacons_to_track.keys():
 
             # check against time threshold
-            if ((
-                dt.datetime.now() - dateutil.parser.parse(row[2])
-            ).total_seconds() < threshold_beacons):
+            if time.time()  - row[2] < threshold_beacons:
 
                 # if not enough time has elapsed check signal strength
                 if row[1] < beacons_ids.beacons_to_track[row[0]]:

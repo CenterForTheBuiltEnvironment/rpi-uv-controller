@@ -1,6 +1,6 @@
 import sqlite3
 from sqlite3 import Error
-import datetime as dt
+import time
 import os
 
 
@@ -60,7 +60,7 @@ def create_beacons_table():
         "CREATE TABLE IF NOT EXISTS beacons "
         "( id integer PRIMARY KEY, "
         "device_id text NOT NULL, "
-        "time_stamp text, "
+        "time_stamp int, "
         "rssi int)"
     )
 
@@ -75,7 +75,7 @@ def create_pir_table():
     sql = (
         "CREATE TABLE IF NOT EXISTS pir "
         "( id integer PRIMARY KEY, "
-        "time_stamp text, "
+        "time_stamp int, "
         "presence int)"
     )
 
@@ -88,7 +88,7 @@ def add_fake_beacons_reading(id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
 
-    reading = (id, dt.datetime.now().isoformat(), rssi)
+    reading = (id, int(time.time()) , rssi)
 
     conn = connect_db()
 
