@@ -8,8 +8,6 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.IN)  # Read output from PIR motion sensor
 
-i = GPIO.input(6)
-
 motion_array = []
 
 # create the table
@@ -19,6 +17,8 @@ sql = """ INSERT INTO pir(time_stamp, presence)
           VALUES(?,?) """
 
 while True:
+
+    i = GPIO.input(6)
 
     if i == 0:  # When output from motion sensor is LOW
         time.sleep(0.5)
