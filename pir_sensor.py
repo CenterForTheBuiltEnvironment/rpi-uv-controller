@@ -12,10 +12,10 @@ while True:
     for time in range(0, 120):
 
         if i == 0:  # When output from motion sensor is LOW
-            time.sleep(0.5)
+            time.sleep(1)
             motion_array.append(False)
         elif i == 1:  # When output from motion sensor is HIGH
-            time.sleep(0.5)
+            time.sleep(1)
             motion_array.append(True)
 
     if True in motion_array:
