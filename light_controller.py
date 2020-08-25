@@ -9,7 +9,7 @@ import numpy as np
 import beacons_ids
 from db_handler import connect_db, read_db
 
-threshold_beacons = 20  # in seconds
+threshold_beacons = 30  # in seconds
 threshold_pir = 30  # in seconds
 
 
@@ -17,6 +17,7 @@ def pir_control():
 
     # query the last entries
     conn = connect_db()
+    
 
     now = int(time.time()) - threshold_pir
 
