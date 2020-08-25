@@ -15,6 +15,7 @@ while True:
             time.sleep(0.5)
             motion_array.append(False)
         elif i == 1:  # When output from motion sensor is HIGH
+            print("motion")
             time.sleep(0.5)
             motion_array.append(True)
 
