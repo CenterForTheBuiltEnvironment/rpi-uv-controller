@@ -18,8 +18,10 @@ def pir_control():
     # query the last entries
     conn = connect_db()
 
+    now = int(time.time()) - threshold_pir
+
     # query only last entry by beacon id
-    query_last_entry_by_id = "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
+    query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
     rows = read_db(conn, query_last_entry_by_id)
 
     conn.close()

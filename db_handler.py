@@ -114,7 +114,8 @@ def main():
     # rows = read_db(conn, query_last_entry_by_id)
 
     # query last entries rpi
-    query_last_entry_by_id = "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
+    now = int(time.time()) - 60
+    query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
     rows = read_db(conn, query_last_entry_by_id)
 
     for row in rows:
