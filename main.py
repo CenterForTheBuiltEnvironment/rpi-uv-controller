@@ -12,6 +12,22 @@ import beacons_ids
 from db_handler import connect_db, read_db
 
 threshold_beacons = 60  # in seconds
+threshold_pir = 60  # in seconds
+
+
+def pir_control():
+
+    # query the last entries
+    conn = connect_db()
+
+    # query only last entry by beacon id
+    query_last_entry_by_id = (
+        "SELECT * FROM rpi ORDER BY time_stamp DESC LIMIT 10"
+    )
+    rows = read_db(conn, query_last_entry_by_id)
+
+    conn.close()
+
 
 
 def beacons_control():
@@ -21,7 +37,7 @@ def beacons_control():
 
     # query only last entry by beacon id
     query_last_entry_by_id = (
-        "SELECT device_id, rssi, MAX(time_stamp) " "FROM beacons " "GROUP BY device_id;"
+        "SELECT device_id, rssi, MAX(time_stamp) FROM beacons GROUP BY device_id;"
     )
     rows = read_db(conn, query_last_entry_by_id)
 
@@ -101,4 +117,4 @@ while True:
         GPIO.output(19, 0)
         GPIO.output(13, 1)
 
-    time.sleep(10)
+    time.sleep(1)

@@ -107,9 +107,15 @@ def main():
     # query = "SELECT * from beacons"
     # rows =  read_db(conn, query)
 
-    # query only last entry by beacon id
+    # # query only last entry by beacon id
+    # query_last_entry_by_id = (
+    #     "SELECT device_id, rssi, MAX(time_stamp) " "FROM beacons " "GROUP BY device_id;"
+    # )
+    # rows = read_db(conn, query_last_entry_by_id)
+
+    # query last entries rpi
     query_last_entry_by_id = (
-        "SELECT device_id, rssi, MAX(time_stamp) " "FROM beacons " "GROUP BY device_id;"
+        "SELECT * FROM rpi ORDER BY time_stamp DESC LIMIT 10"
     )
     rows = read_db(conn, query_last_entry_by_id)
 
