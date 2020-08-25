@@ -8,6 +8,19 @@ This repository contains the code to automatically control the UV lights in a sp
 
 ## How to get started
 
-Clone this repository on the RPI and run the file called `main.py`
+Clone this repository on the RPI and run the file `run_code.sh` using the following command:
+```
+bash run_code.sh
+```
 
-You will need to edit the file called `beacons_ids.py` which contains a list of all the beacons that are tracked by the RPI.
+This will run automatically all the Python scripts needed.
+
+You can selectively kill a Python script using the following command:
+```
+sudo pkill -f <name_python_file>
+```
+
+Alternatively run the following command to kill them all at once.
+```
+bash stop_code.sh
+```
