@@ -9,13 +9,13 @@ while True:
     i = GPIO.input(6)
 
     motion_array = []
-    for time in range(0, 120):
+    for interval in range(0, 120):
 
         if i == 0:  # When output from motion sensor is LOW
-            time.sleep(1)
+            time.sleep(0.5)
             motion_array.append(False)
         elif i == 1:  # When output from motion sensor is HIGH
-            time.sleep(1)
+            time.sleep(0.5)
             motion_array.append(True)
 
     if True in motion_array:
