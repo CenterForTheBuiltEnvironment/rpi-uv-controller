@@ -7,6 +7,7 @@ GPIO.setup(6, GPIO.IN)  # Read output from PIR motion sensor
 
 while True:
     i = GPIO.input(6)
+    print(i)
     if i == 0:  # When output from motion sensor is LOW
         print ("No motion detected", i)
         time.sleep(1)
