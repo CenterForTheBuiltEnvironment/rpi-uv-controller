@@ -9,8 +9,8 @@ import numpy as np
 import beacons_ids
 from db_handler import connect_db, read_db
 
-threshold_beacons = 60  # in seconds
-threshold_pir = 60  # in seconds
+threshold_beacons = 20  # in seconds
+threshold_pir = 30  # in seconds
 
 
 def pir_control():
@@ -105,7 +105,7 @@ while True:
     ctr_beacon = beacons_control()
     ctr_pir = pir_control()
 
-    print("beacon control", ctr_beacon)
+    # print("beacon control", ctr_beacon)
 
     if ctr_pir:
         if ctr_beacon["desk_light"]:

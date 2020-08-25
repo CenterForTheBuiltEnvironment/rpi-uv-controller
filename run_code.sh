@@ -5,6 +5,8 @@ git pull &
 pid=$!
 wait $pid
 
+sleep 3
+
 echo "Starting python scripts"
 # start beacon scanner
 sudo python3 beacon_scanner.py &
