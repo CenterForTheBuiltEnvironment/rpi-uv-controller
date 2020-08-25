@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-import datetime as dt
 
 import db_handler
 
@@ -27,28 +26,26 @@ while True:
         motion_array.append(True)
         time.sleep(5)
 
-        print("motion detected")
-
-        values = (int(time.time()) , 1)
+        values = (int(time.time()), 1)
 
         conn = db_handler.connect_db()
         index = db_handler.write_db(conn, sql, values)
         conn.close()
 
-        print("wrote to db, index: ", index)
+        print(f"pir_sensor -- index_db: {index}, value: {values[1]}")
 
     if len(motion_array) > 120:
 
         conn = db_handler.connect_db()
 
         if True in motion_array:
-            values = (int(time.time()) , 1)
+            values = (int(time.time()), 1)
         else:
-            values = (int(time.time()) , 0)
+            values = (int(time.time()), 0)
 
         index = db_handler.write_db(conn, sql, values)
         conn.close()
 
-        print(f"wrote to db, index: {index}, value: {values[1]}")
+        print(f"pir_sensor -- index_db: {index}, value: {values[1]}")
 
         motion_array = []

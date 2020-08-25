@@ -31,7 +31,6 @@ def scan_beacons():
     # Main Loop that scans for the beacons
     while True:
 
-        print("Scanning ... ")
         devices = scanner.scan(5.0)
 
         conn = db_handler.connect_db()
@@ -40,8 +39,6 @@ def scan_beacons():
 
             if dev.addr in beacons_ids.beacons_to_track.keys():
 
-                print(f"beacon: {dev.addr}, rssi: {dev.rssi}")
-
                 values = (dev.addr, int(time.time()), dev.rssi)
 
                 sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
@@ -49,7 +46,9 @@ def scan_beacons():
 
                 index = db_handler.write_db(conn, sql, values)
 
-                print(f"index new entry: {index}")
+                print(
+                    f"beacon_scanner -- index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
+                )
 
         conn.close()
 

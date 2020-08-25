@@ -8,7 +8,17 @@ This repository contains the code to automatically control the UV lights in a sp
 
 ## How to get started
 
-Clone this repository on the RPI and run the file `run_code.sh` using the following command:
+Clone this repository on the RPI using the following code:
+```
+git clone https://github.com/FedericoTartarini/rpi-uv-controller.git
+```
+
+cd into the project repository using the following command:
+```
+cd rpi-uv-controller
+```
+ 
+Run the file `run_code.sh` using the following command:
 ```
 bash run_code.sh
 ```

@@ -19,13 +19,10 @@ def pir_control():
     conn = connect_db()
 
     # query only last entry by beacon id
-    query_last_entry_by_id = (
-        "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
-    )
+    query_last_entry_by_id = "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
     rows = read_db(conn, query_last_entry_by_id)
 
     conn.close()
-
 
 
 def beacons_control():
@@ -53,7 +50,7 @@ def beacons_control():
         if row[0] in beacons_ids.beacons_to_track.keys():
 
             # check against time threshold
-            if time.time()  - row[2] < threshold_beacons:
+            if time.time() - row[2] < threshold_beacons:
 
                 # if not enough time has elapsed check signal strength
                 if row[1] < beacons_ids.beacons_to_track[row[0]]:
@@ -100,11 +97,11 @@ while True:
 
     print("beacon control", ctr_beacon)
 
-    if ctr_beacon['desk_light']:
+    if ctr_beacon["desk_light"]:
         GPIO.output(26, 1)
         GPIO.output(19, 0)
         GPIO.output(13, 0)
-    elif ctr_beacon['top_light']:
+    elif ctr_beacon["top_light"]:
         GPIO.output(26, 0)
         GPIO.output(19, 1)
         GPIO.output(13, 0)

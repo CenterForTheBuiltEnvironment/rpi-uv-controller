@@ -88,7 +88,7 @@ def add_fake_beacons_reading(id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
 
-    reading = (id, int(time.time()) , rssi)
+    reading = (id, int(time.time()), rssi)
 
     conn = connect_db()
 
@@ -114,9 +114,7 @@ def main():
     # rows = read_db(conn, query_last_entry_by_id)
 
     # query last entries rpi
-    query_last_entry_by_id = (
-        "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
-    )
+    query_last_entry_by_id = "SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 10"
     rows = read_db(conn, query_last_entry_by_id)
 
     for row in rows:
