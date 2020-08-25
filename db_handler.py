@@ -69,6 +69,21 @@ def create_beacons_table():
     conn.close()
 
 
+def create_pir_table():
+    conn = connect_db()
+
+    sql = (
+        "CREATE TABLE IF NOT EXISTS pir "
+        "( id integer PRIMARY KEY, "
+        "time_stamp text, "
+        "presence int)"
+    )
+
+    create_table(conn, sql)
+
+    conn.close()
+
+
 def add_fake_beacons_reading(id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
