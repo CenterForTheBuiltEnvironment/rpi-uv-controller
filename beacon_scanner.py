@@ -4,6 +4,7 @@ from bluepy.btle import Scanner, DefaultDelegate
 import time
 import beacons_ids
 import db_handler
+import datetime as dt
 
 # BLE Scanning class
 class ScanDelegate(DefaultDelegate):
@@ -47,7 +48,7 @@ def scan_beacons():
                 index = db_handler.write_db(conn, sql, values)
 
                 print(
-                    f"beacon_scanner -- index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
+                    f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
                 )
 
         conn.close()

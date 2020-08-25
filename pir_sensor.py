@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import datetime as dt
 
 import db_handler
 
@@ -32,9 +33,9 @@ while True:
         index = db_handler.write_db(conn, sql, values)
         conn.close()
 
-        print(f"pir_sensor -- index_db: {index}, value: {values[1]}")
+        print(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}")
 
-    if len(motion_array) > 120:
+    if len(motion_array) > 60:
 
         conn = db_handler.connect_db()
 
@@ -46,6 +47,6 @@ while True:
         index = db_handler.write_db(conn, sql, values)
         conn.close()
 
-        print(f"pir_sensor -- index_db: {index}, value: {values[1]}")
+        print(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}")
 
         motion_array = []
