@@ -12,7 +12,7 @@ from db_handler import connect_db, read_db
 delay_beacons = 30  # in seconds
 delay_pir = 30  # in seconds
 
-threshold_ultrasonic_std = 0.05
+threshold_ultrasonic_std = 0.02 # calculated using the calibration data
 
 
 def ultrasonic_control():
