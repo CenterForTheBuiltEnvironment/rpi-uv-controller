@@ -132,20 +132,38 @@ while True:
     # print("beacon control", ctr_beacon)
 
     if ctr_ultrasonic:
+
         if ctr_pir:
+
+            # turn on all lights
             if ctr_beacon["desk_light"]:
                 GPIO.output(26, 1)
                 GPIO.output(19, 0)
                 GPIO.output(13, 0)
+
+            # turn of the desk light but on the top light if beacon farther then threshold
             elif ctr_beacon["top_light"]:
                 GPIO.output(26, 0)
                 GPIO.output(19, 1)
                 GPIO.output(13, 0)
+
+            # turn of the lights if beacon is close
             else:
+                print("turned off by beacon")
                 GPIO.output(26, 0)
                 GPIO.output(19, 0)
                 GPIO.output(13, 1)
+
+        # turn of the lights if pir detected occupancy
+        else:
+            print("turned off by pir")
+            GPIO.output(26, 0)
+            GPIO.output(19, 0)
+            GPIO.output(13, 1)
+
+    # turn of the lights if ultrasonic detected motion
     else:
+        print("turned off by ultrasonic")
         GPIO.output(26, 0)
         GPIO.output(19, 0)
         GPIO.output(13, 1)
