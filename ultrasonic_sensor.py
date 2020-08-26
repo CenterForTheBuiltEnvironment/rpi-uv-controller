@@ -19,6 +19,6 @@ while True:
     mean = np.mean(distances)
     std = np.std(distances)
 
-    print(mean, std, len(distances))
+    print(distance, mean, std, len(distances))
 
-    time.sleep(1)
+    time.sleep(0.1)
