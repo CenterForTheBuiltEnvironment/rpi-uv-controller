@@ -101,6 +101,23 @@ def create_ultrasonic_calibration_table():
     conn.close()
 
 
+def create_ultrasonic_table():
+    conn = connect_db()
+
+    sql = (
+        "CREATE TABLE IF NOT EXISTS ultrasonic "
+        "( id integer PRIMARY KEY, "
+        "time_stamp int, "
+        "distance real, "
+        "mean real, "
+        "std real)"
+    )
+
+    create_table(conn, sql)
+
+    conn.close()
+
+
 def add_fake_beacons_reading(id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
@@ -130,10 +147,14 @@ def main():
     # )
     # rows = read_db(conn, query_last_entry_by_id)
 
-    # query last entries rpi
-    now = int(time.time()) - 60
-    query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
-    rows = read_db(conn, query_last_entry_by_id)
+    # # query last entries rpi
+    # now = int(time.time()) - 60
+    # query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
+    # rows = read_db(conn, query_last_entry_by_id)
+
+    # query ultrasonic data
+    query = f"SELECT * FROM ultrasonic ORDER BY time_stamp DESC LIMIT 1"
+    rows = read_db(conn, query)
 
     for row in rows:
         print(row)
