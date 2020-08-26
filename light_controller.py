@@ -9,17 +9,39 @@ import numpy as np
 import beacons_ids
 from db_handler import connect_db, read_db
 
-threshold_beacons = 30  # in seconds
-threshold_pir = 30  # in seconds
+delay_beacons = 30  # in seconds
+delay_pir = 30  # in seconds
+
+threshold_ultrasonic_std = 0.05
+
+
+def ultrasonic_control():
+
+    # query the last entries
+    conn = connect_db()
+    
+    # query only last entry by beacon id
+    query = f"SELECT std FROM ultrasonic ORDER BY time_stamp DESC LIMIT 1"
+    rows = read_db(conn, query)
+
+    conn.close()
+
+    std = rows[0][0]
+
+    print("standard deviation", std)
+
+    if std > threshold_ultrasonic_std:
+        return False
+    else:
+        return True
 
 
 def pir_control():
 
     # query the last entries
     conn = connect_db()
-    
 
-    now = int(time.time()) - threshold_pir
+    now = int(time.time()) - delay_pir
 
     # query only last entry by beacon id
     query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
@@ -60,7 +82,7 @@ def beacons_control():
         if row[0] in beacons_ids.beacons_to_track.keys():
 
             # check against time threshold
-            if time.time() - row[2] < threshold_beacons:
+            if time.time() - row[2] < delay_beacons:
 
                 # if not enough time has elapsed check signal strength
                 if row[1] < beacons_ids.beacons_to_track[row[0]]:
@@ -105,22 +127,24 @@ while True:
 
     ctr_beacon = beacons_control()
     ctr_pir = pir_control()
+    ctr_ultrasonic = ultrasonic_control()
 
     # print("beacon control", ctr_beacon)
 
-    if ctr_pir:
-        if ctr_beacon["desk_light"]:
-            GPIO.output(26, 1)
-            GPIO.output(19, 0)
-            GPIO.output(13, 0)
-        elif ctr_beacon["top_light"]:
-            GPIO.output(26, 0)
-            GPIO.output(19, 1)
-            GPIO.output(13, 0)
-        else:
-            GPIO.output(26, 0)
-            GPIO.output(19, 0)
-            GPIO.output(13, 1)
+    if ctr_ultrasonic:
+        if ctr_pir:
+            if ctr_beacon["desk_light"]:
+                GPIO.output(26, 1)
+                GPIO.output(19, 0)
+                GPIO.output(13, 0)
+            elif ctr_beacon["top_light"]:
+                GPIO.output(26, 0)
+                GPIO.output(19, 1)
+                GPIO.output(13, 0)
+            else:
+                GPIO.output(26, 0)
+                GPIO.output(19, 0)
+                GPIO.output(13, 1)
     else:
         GPIO.output(26, 0)
         GPIO.output(19, 0)
