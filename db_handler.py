@@ -84,6 +84,23 @@ def create_pir_table():
     conn.close()
 
 
+def create_ultrasonic_calibration_table():
+    conn = connect_db()
+
+    sql = (
+        "CREATE TABLE IF NOT EXISTS calibration_ultrasonic "
+        "( id integer PRIMARY KEY, "
+        "time_stamp int, "
+        "distance real, "
+        "mean real, "
+        "std real)"
+    )
+
+    create_table(conn, sql)
+
+    conn.close()
+
+
 def add_fake_beacons_reading(id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
