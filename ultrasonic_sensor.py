@@ -1,5 +1,6 @@
 from gpiozero import DistanceSensor
 import time
+import datetime as dt
 import numpy as np
 
 import db_handler
@@ -73,6 +74,11 @@ while True:
 
             # write to db
             index = db_handler.write_db(conn, sql, values)
+
+            print(
+                f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
+                f"{index}, dist: {round(distance, 3)}, std: {round(std, 3)}"
+                )
 
             # close connection
             conn.close()
