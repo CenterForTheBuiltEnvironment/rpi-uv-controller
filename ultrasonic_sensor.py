@@ -47,17 +47,17 @@ while True:
         # delete first entry
         del distances[0]
 
-        # calculate mean and std
-        mean = np.mean(distances)
-        std = np.std(distances)
+    # calculate mean and std
+    mean = np.mean(distances)
+    std = np.std(distances)
 
-        # # save data to calibration table
-        # print(round(distance, 3), round(mean, 3), round(std, 3))
-        #
-        # values = (int(time.time()), round(distance, 3),
-        #           round(mean, 3), round(std, 3))
-        #
-        # index = db_handler.write_db(conn, sql, values)
+    # # save data to calibration table
+    # print(round(distance, 3), round(mean, 3), round(std, 3))
+    #
+    # values = (int(time.time()), round(distance, 3),
+    #           round(mean, 3), round(std, 3))
+    #
+    # index = db_handler.write_db(conn, sql, values)
 
     # if enough time has elapsed since last time data were written to db
     if time.time() - time_wrote_to_db > logging_time:
