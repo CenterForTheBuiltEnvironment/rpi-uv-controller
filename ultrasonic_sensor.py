@@ -59,29 +59,29 @@ while True:
         #
         # index = db_handler.write_db(conn, sql, values)
 
-        # if enough time has elapsed since last time data were written to db
-        if time.time() - time_wrote_to_db > logging_time:
+    # if enough time has elapsed since last time data were written to db
+    if time.time() - time_wrote_to_db > logging_time:
 
-            # update timestamp
-            time_wrote_to_db = time.time()
+        # update timestamp
+        time_wrote_to_db = time.time()
 
-            # connect to db
-            conn = db_handler.connect_db()
+        # connect to db
+        conn = db_handler.connect_db()
 
-            # prepare values to be stored
-            values = (int(time_wrote_to_db), round(distance, 3),
-                      round(mean, 3), round(std, 3))
+        # prepare values to be stored
+        values = (int(time_wrote_to_db), round(distance, 3),
+                  round(mean, 3), round(std, 3))
 
-            # write to db
-            index = db_handler.write_db(conn, sql, values)
+        # write to db
+        index = db_handler.write_db(conn, sql, values)
 
-            print(
-                f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
-                f"{index}, dist: {round(distance, 3)}, std: {round(std, 3)}"
-                )
+        print(
+            f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
+            f"{index}, dist: {round(distance, 3)}, std: {round(std, 3)}"
+            )
 
-            # close connection
-            conn.close()
+        # close connection
+        conn.close()
 
     # pause script
     time.sleep(sampling_time)
