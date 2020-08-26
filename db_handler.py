@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import time
 import os
+import csv
 
 
 db_file_location = os.path.join(os.getcwd(), "database.db")
@@ -153,11 +154,14 @@ def main():
     # rows = read_db(conn, query_last_entry_by_id)
 
     # query ultrasonic data
-    query = f"SELECT * FROM ultrasonic ORDER BY time_stamp DESC LIMIT 1"
+    query = f"SELECT * FROM calibration_ultrasonic"
     rows = read_db(conn, query)
 
-    for row in rows:
-        print(row)
+    with open('ultrasonic_calibration.csv', 'w', newline='') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=' ',
+            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        for row in rows:
+            spamwriter.writerow(row)
 
     conn.close()
 
