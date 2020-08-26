@@ -29,7 +29,7 @@ def ultrasonic_control():
 
         std = rows[0][0]
 
-        print("standard deviation", std)
+        # print("standard deviation", std)
 
         if std > threshold_ultrasonic_std:
             return False
