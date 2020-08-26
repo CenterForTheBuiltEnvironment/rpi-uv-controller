@@ -16,9 +16,9 @@ while True:
 
         del distances[0]
 
-        mean = np.mean(distances)
-        std = np.std(distances)
+    mean = np.mean(distances)
+    std = np.std(distances)
 
-        print(mean, std)
+    print(mean, std, len(distances))
 
     time.sleep(1)
