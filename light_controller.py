@@ -17,23 +17,26 @@ threshold_ultrasonic_std = 0.02 # calculated using the calibration data
 
 def ultrasonic_control():
 
-    # query the last entries
-    conn = connect_db()
-    
-    # query only last entry by beacon id
-    query = f"SELECT std FROM ultrasonic ORDER BY time_stamp DESC LIMIT 1"
-    rows = read_db(conn, query)
+    try:
+        # query the last entries
+        conn = connect_db()
 
-    conn.close()
+        # query only last entry by beacon id
+        query = f"SELECT std FROM ultrasonic ORDER BY time_stamp DESC LIMIT 1"
+        rows = read_db(conn, query)
 
-    std = rows[0][0]
+        conn.close()
 
-    print("standard deviation", std)
+        std = rows[0][0]
 
-    if std > threshold_ultrasonic_std:
+        print("standard deviation", std)
+
+        if std > threshold_ultrasonic_std:
+            return False
+        else:
+            return True
+    except:
         return False
-    else:
-        return True
 
 
 def pir_control():
