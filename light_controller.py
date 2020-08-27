@@ -5,6 +5,7 @@ This file contains the control logic
 import RPi.GPIO as GPIO
 import time
 import numpy as np
+import datetime as dt
 
 import beacons_ids
 import db_handler
@@ -32,6 +33,24 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(desk_light_pin, GPIO.OUT)  # green
 GPIO.setup(top_light_pin, GPIO.OUT)  # yellow
 GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
+
+# stores in memory if occupancy was detected
+occupancy_detected = True
+
+lights_dict = {
+    "top": {
+        "status": 0,
+        "time_on": 0,
+        "max_time_on": 60,
+        "pin": 19  # todo replace top_light_pin with this
+        },
+    "desk": {
+        "status": 0,
+        "time_on": 0,
+        "max_time_on": 60,
+        "pin": 26  # todo replace desk_light_pin with this
+        },
+    }
 
 
 def ultrasonic_control():
@@ -143,6 +162,7 @@ def all_lights_off():
     GPIO.output(all_off_light_pin, 1)
 
 
+# todo combine next two functions into one and get info from lights dict
 def desk_light(signal):
 
     GPIO.output(desk_light_pin, signal)
@@ -155,9 +175,20 @@ def top_light(signal):
     GPIO.output(all_off_light_pin, 0)
 
 
+def light_switch(signal=0, light_key='top'):
+
+    GPIO.output(lights_dict[light_key]["pin"], signal)
+
+    if signal == 1:
+
+        GPIO.output(all_off_light_pin, 0)
+
+
 if __name__ == "__main__":
 
     db_handler.create_controller_table()
+
+    all_lights_off()
 
     while True:
 
@@ -173,15 +204,18 @@ if __name__ == "__main__":
 
                 sensor = "beacon"
 
-                # control desk light
-                desk_light(signal=ctr_beacon["desk_light"])
+                if occupancy_detected:
 
-                # control top light
-                top_light(signal=ctr_beacon["top_light"])
+                    # control desk light
+                    desk_light(signal=ctr_beacon["desk_light"])
 
-                signals = [int(ctr_beacon["desk_light"]), int(ctr_beacon["top_light"])]
+                    # control top light
+                    top_light(signal=ctr_beacon["top_light"])
+
+                    signals = [int(ctr_beacon["desk_light"]), int(ctr_beacon["top_light"])]  # todo add this info to lights_dict
 
                 if 1 not in signals:
+
                     all_lights_off()
 
             # turn of the lights if pir detected occupancy
@@ -201,17 +235,43 @@ if __name__ == "__main__":
 
             signals = [0, 0]
 
+        # control for how long UV lights were turned on
+        for ix, light_type in enumerate(lights_dict.keys()):
+
+            light_info = lights_dict[light_type]
+            now = time.time()
+
+            if (signals[ix] == 1) and (light_info['status'] == 0):
+
+                print(f"{dt.datetime.now().isoformat()} - "
+                      f"{light_type} turned on")
+
+                light_info['time_on'] = now
+
+            if (now - light_info['time_on']) > light_info['max_time_on']:
+
+                light_switch(signal = 0, light_key=light_type)
+
+                if light_type == 'top':
+
+                    occupancy_detected = False
+
+        if 0 in signals:
+
+            occupancy_detected = True
+
+
         # write control signal to database
         connection = db_handler.connect_db()
 
-        for ix, light_type in enumerate(["desk", "top"]):
+        for ix, light_type in enumerate(["desk", "top"]):  # todo replace this array with keys lights dict
 
             values = (int(time.time()), sensor, light_type, signals[ix])
             sql = " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) " \
                   "VALUES(?,?,?,?) "
             row_index = db_handler.write_db(connection, sql, values)
 
-            print(values)
+            # print(values)
 
         connection.close()
 
