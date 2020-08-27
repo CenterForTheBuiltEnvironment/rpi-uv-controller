@@ -83,14 +83,14 @@ def pir_control():
     conn = db_handler.connect_db()
 
     # query only last entry by beacon id
-    query_last_entry_by_id = f"SELECT presence FROM pir ORDER BY time_stamp DESC LIMIT 1"
+    query_last_entry_by_id = f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
     rows = db_handler.read_db(conn, query_last_entry_by_id)
 
     conn.close()
 
     presence = rows[0][0]
 
-    if presence == 1:
+    if (presence == 1) or (time.time() - rows[0][1] < delay_pir):
         return False
     else:
         return True
@@ -264,9 +264,9 @@ if __name__ == "__main__":
 
                     if light_type == 'top':
 
+                        print("lights were on for long enough")
+
                         occupancy_detected = False
-
-
 
 
         # write control signal to database
