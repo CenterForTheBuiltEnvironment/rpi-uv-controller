@@ -88,9 +88,9 @@ def pir_control():
 
     conn.close()
 
-    occupancy_array = rows[0][0]
+    presence = rows[0][0]
 
-    if 1 in occupancy_array:
+    if presence == 1:
         return False
     else:
         return True
