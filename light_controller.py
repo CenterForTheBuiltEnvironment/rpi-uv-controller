@@ -146,11 +146,13 @@ def all_lights_off():
 def desk_light(signal):
 
     GPIO.output(desk_light_pin, signal)
+    GPIO.output(all_off_light_pin, 0)
 
 
 def top_light(signal):
 
     GPIO.output(top_light_pin, signal)
+    GPIO.output(all_off_light_pin, 0)
 
 
 if __name__ == "__main__":
