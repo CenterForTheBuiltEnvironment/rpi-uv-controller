@@ -181,6 +181,9 @@ if __name__ == "__main__":
 
                 signals = [int(ctr_beacon["desk_light"]), int(ctr_beacon["top_light"])]
 
+                if 1 not in signals:
+                    all_lights_off()
+
             # turn of the lights if pir detected occupancy
             else:
 
