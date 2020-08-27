@@ -202,7 +202,7 @@ if __name__ == "__main__":
         for ix, light_type in enumerate(["desk", "top"]):
 
             values = (int(time.time()), sensor, light_type, signals[ix])
-            sql = " INSERT INTO control_singals(time_stamp, sensor, light_type, signal) " \
+            sql = " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) " \
                   "VALUES(?,?,?,?) "
             row_index = db_handler.write_db(connection, sql, values)
 
