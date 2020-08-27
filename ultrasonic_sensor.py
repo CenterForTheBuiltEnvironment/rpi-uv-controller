@@ -9,6 +9,7 @@ import db_handler
 time_wrote_to_db = time.time()
 logging_time = 10
 sampling_time = 0.5
+previous_std = 0
 
 # # create calibration table
 # db_handler.create_ultrasonic_calibration_table()
@@ -36,7 +37,7 @@ ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=2)
 while True:
 
     # measure disatnce
-    distance = ultrasonic.distance
+    distance = round(ultrasonic.distance, 4)
 
     # append to the array of previously measured distances
     distances.append(distance)
@@ -48,8 +49,8 @@ while True:
         del distances[0]
 
     # calculate mean and std
-    mean = np.mean(distances)
-    std = np.std(distances)
+    mean = round(np.mean(distances), 4)
+    std = round(np.std(distances), 4)
 
     # # save data to calibration table
     # print(round(distance, 3), round(mean, 3), round(std, 3))
@@ -60,7 +61,10 @@ while True:
     # index = db_handler.write_db(conn, sql, values)
 
     # if enough time has elapsed since last time data were written to db
-    if time.time() - time_wrote_to_db > logging_time:
+    if (time.time() - time_wrote_to_db > logging_time) and (previous_std != std):
+
+        # update value
+        previous_std = std
 
         # update timestamp
         time_wrote_to_db = time.time()
@@ -71,9 +75,9 @@ while True:
         # prepare values to be stored
         values = (
             int(time_wrote_to_db),
-            round(distance, 3),
-            round(mean, 3),
-            round(std, 3),
+            distance,
+            mean,
+            std,
         )
 
         # write to db
@@ -81,7 +85,7 @@ while True:
 
         print(
             f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
-            f"{index}, dist: {round(distance, 3)}, std: {round(std, 3)}"
+            f"{index}, dist: {distance}, std: {std}"
         )
 
         # close connection
