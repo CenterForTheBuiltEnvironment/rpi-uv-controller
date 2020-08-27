@@ -136,8 +136,8 @@ def beacons_control():
 
 def all_lights_off():
 
-    GPIO.output(desk_light_pin, 0)
-    GPIO.output(top_light_pin, 0)
+    desk_light_off()
+    top_light_off()
     GPIO.output(all_off_light_pin, 1)
 
 
