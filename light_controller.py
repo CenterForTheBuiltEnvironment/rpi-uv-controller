@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
                     light_info['time_on'] = now
 
-                elif (now - light_info['time_on']) > light_info['max_time_on']:
+                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1):
 
                     light_switch(signal = 0, light_key=light_type)
 
@@ -283,6 +283,6 @@ if __name__ == "__main__":
 
         connection.close()
 
-        time.sleep(5)
+        time.sleep(1)
 
         # todo turn the lights on at midnight
