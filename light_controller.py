@@ -164,7 +164,7 @@ def all_lights_off():
         lights_dict[light_key]['status'] = 0
 
         print(f"{dt.datetime.now().isoformat()} - "
-              f"{light_type} turned off")
+              f"{light_key} turned off")
 
 
 # todo combine next two functions into one and get info from lights dict
