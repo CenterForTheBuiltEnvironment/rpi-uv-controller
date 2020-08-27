@@ -83,12 +83,12 @@ def pir_control():
     conn = db_handler.connect_db()
 
     # query only last entry by beacon id
-    query_last_entry_by_id = f"SELECT * FROM pir ORDER BY time_stamp DESC LIMIT 1"
+    query_last_entry_by_id = f"SELECT presence FROM pir ORDER BY time_stamp DESC LIMIT 1"
     rows = db_handler.read_db(conn, query_last_entry_by_id)
 
     conn.close()
 
-    occupancy_array = rows[2][0]
+    occupancy_array = rows[0][0]
 
     if 1 in occupancy_array:
         return False
