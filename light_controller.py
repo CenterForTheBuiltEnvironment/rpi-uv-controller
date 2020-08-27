@@ -246,6 +246,8 @@ if __name__ == "__main__":
                 print(f"{dt.datetime.now().isoformat()} - "
                       f"{light_type} turned on")
 
+                light_info['status'] = 1
+
                 light_info['time_on'] = now
 
             if (now - light_info['time_on']) > light_info['max_time_on']:
@@ -276,3 +278,5 @@ if __name__ == "__main__":
         connection.close()
 
         time.sleep(5)
+
+        # todo turn the lights on at midnight
