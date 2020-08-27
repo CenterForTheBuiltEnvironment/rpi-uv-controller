@@ -5,11 +5,12 @@ import datetime as dt
 import db_handler
 import light_controller
 
+pir_pin = 6
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(6, GPIO.IN)  # Read output from PIR motion sensor
+GPIO.setup(pir_pin, GPIO.IN)  # Read output from PIR motion sensor
 
-motion_array = []
+previous_pir_reading = 0
 
 # create the table
 db_handler.create_pir_table()
@@ -20,18 +21,18 @@ if __name__ == "__main__":
 
     while True:
 
-        pir_signal = GPIO.input(6)
+        pir_signal = GPIO.input(pir_pin)
 
-        if pir_signal == 0:  # When output from motion sensor is LOW
-            motion_array.append(False)
-        elif pir_signal == 1:  # When output from motion sensor is HIGH
+        if pir_signal != previous_pir_reading:
 
-            # turn off all lights immediately
-            light_controller.all_lights_off()
+            previous_pir_reading = pir_signal
 
-            motion_array.append(True)
+            if pir_signal == 1:
 
-            values = (int(time.time()), 1)
+                # turn off all lights immediately
+                light_controller.all_lights_off()
+
+            values = (int(time.time()), pir_signal)
 
             conn = db_handler.connect_db()
             index = db_handler.write_db(conn, sql, values)
@@ -40,23 +41,5 @@ if __name__ == "__main__":
             print(
                 f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
             )
-
-        if len(motion_array) > 60:
-
-            conn = db_handler.connect_db()
-
-            if True in motion_array:
-                values = (int(time.time()), 1)
-            else:
-                values = (int(time.time()), 0)
-
-            index = db_handler.write_db(conn, sql, values)
-            conn.close()
-
-            print(
-                f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
-            )
-
-            motion_array = []
 
         time.sleep(0.5)
