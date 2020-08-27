@@ -11,7 +11,6 @@ db_file_location = os.path.join(os.getcwd(), "database.db")
 def connect_db():
     """ create a database connection to the SQLite database
         specified by the db_file
-    :return: Connection object or None
     """
     conn = None
     try:
@@ -25,8 +24,6 @@ def connect_db():
 def read_db(conn, query_str):
     """
     Query all rows in the tasks table
-    :param conn: the Connection object
-    :return:
     """
     cur = conn.cursor()
     cur.execute(query_str)
@@ -119,11 +116,28 @@ def create_ultrasonic_table():
     conn.close()
 
 
-def add_fake_beacons_reading(id, rssi):
+def create_controller_table():
+    conn = connect_db()
+
+    sql = (
+        "CREATE TABLE IF NOT EXISTS control_signals "
+        "( id integer PRIMARY KEY, "
+        "time_stamp int, "
+        "sensor text, "
+        "light_type text, "
+        "signal int)"
+    )
+
+    create_table(conn, sql)
+
+    conn.close()
+
+
+def add_fake_beacons_reading(_id, rssi):
 
     sql = "INSERT INTO beacons(device_id, time_stamp, rssi) VALUES(?,?,?) "
 
-    reading = (id, int(time.time()), rssi)
+    reading = (_id, int(time.time()), rssi)
 
     conn = connect_db()
 
@@ -157,11 +171,12 @@ def main():
     query = f"SELECT * FROM calibration_ultrasonic"
     rows = read_db(conn, query)
 
-    with open('ultrasonic_calibration.csv', 'w', newline='') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=' ',
-            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    with open("ultrasonic_calibration.csv", "w", newline="") as csv_file:
+        writer = csv.writer(
+            csv_file, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
+        )
         for row in rows:
-            spamwriter.writerow(row)
+            writer.writerow(row)
 
     conn.close()
 

@@ -16,7 +16,7 @@ db_handler.create_pir_table()
 
 sql = " INSERT INTO pir(time_stamp, presence) VALUES(?,?) "
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     while True:
 
@@ -26,6 +26,7 @@ if __name__ == '__main__':
             motion_array.append(False)
         elif pir_signal == 1:  # When output from motion sensor is HIGH
 
+            # turn off all lights immediately
             light_controller.all_lights_off()
 
             motion_array.append(True)
@@ -36,7 +37,9 @@ if __name__ == '__main__':
             index = db_handler.write_db(conn, sql, values)
             conn.close()
 
-            print(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}")
+            print(
+                f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
+            )
 
         if len(motion_array) > 60:
 
@@ -50,7 +53,9 @@ if __name__ == '__main__':
             index = db_handler.write_db(conn, sql, values)
             conn.close()
 
-            print(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}")
+            print(
+                f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
+            )
 
             motion_array = []
 

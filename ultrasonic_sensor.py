@@ -69,8 +69,12 @@ while True:
         conn = db_handler.connect_db()
 
         # prepare values to be stored
-        values = (int(time_wrote_to_db), round(distance, 3),
-                  round(mean, 3), round(std, 3))
+        values = (
+            int(time_wrote_to_db),
+            round(distance, 3),
+            round(mean, 3),
+            round(std, 3),
+        )
 
         # write to db
         index = db_handler.write_db(conn, sql, values)
@@ -78,7 +82,7 @@ while True:
         print(
             f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
             f"{index}, dist: {round(distance, 3)}, std: {round(std, 3)}"
-            )
+        )
 
         # close connection
         conn.close()
