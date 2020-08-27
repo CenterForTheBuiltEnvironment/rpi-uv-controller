@@ -9,10 +9,27 @@ import numpy as np
 import beacons_ids
 from db_handler import connect_db, read_db
 
+# delay between last signal and lights can be turned on
 delay_beacons = 30  # in seconds
 delay_pir = 30  # in seconds
 
-threshold_ultrasonic_std = 0.02 # calculated using the calibration data
+# define the GPIOs pin that control the light
+top_light_pin = 19
+desk_light_pin = 26
+all_off_light_pin = 13
+
+# threshold for ultrasonic sensor to detect movement
+threshold_ultrasonic_std = 0.02 # calculated using the calibration data, this is the std
+
+# set up board configuration RPI
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+# https://pinout.xyz
+
+# set pin role
+GPIO.setup(desk_light_pin, GPIO.OUT)  # green
+GPIO.setup(top_light_pin, GPIO.OUT)  # yellow
+GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
 
 def ultrasonic_control():
@@ -117,58 +134,72 @@ def beacons_control():
     return {"top_light": top_light_control, "desk_light": desk_light_control}
 
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
+def all_lights_off():
 
-# https://pinout.xyz
+    GPIO.output(desk_light_pin, 0)
+    GPIO.output(top_light_pin, 0)
+    GPIO.output(all_off_light_pin, 1)
 
-GPIO.setup(26, GPIO.OUT)  # green
-GPIO.setup(19, GPIO.OUT)  # yellow
-GPIO.setup(13, GPIO.OUT)  # red
 
-while True:
+def desk_light_on():
 
-    ctr_beacon = beacons_control()
-    ctr_pir = pir_control()
-    ctr_ultrasonic = ultrasonic_control()
+    GPIO.output(desk_light_pin, 1)
 
-    # print("beacon control", ctr_beacon)
 
-    if ctr_ultrasonic:
+def desk_light_off():
 
-        if ctr_pir:
+    GPIO.output(desk_light_pin, 0)
 
-            # turn on all lights
-            if ctr_beacon["desk_light"]:
-                GPIO.output(26, 1)
-                GPIO.output(19, 0)
-                GPIO.output(13, 0)
 
-            # turn of the desk light but on the top light if beacon farther then threshold
-            elif ctr_beacon["top_light"]:
-                GPIO.output(26, 0)
-                GPIO.output(19, 1)
-                GPIO.output(13, 0)
+def top_light_on():
 
-            # turn of the lights if beacon is close
+    GPIO.output(desk_light_pin, 1)
+
+
+def top_light_off():
+
+    GPIO.output(desk_light_pin, 0)
+
+
+if __name__ == '__main__':
+
+    while True:
+
+        # get the control signal from each sensor
+        ctr_beacon = beacons_control()
+        ctr_pir = pir_control()
+        ctr_ultrasonic = ultrasonic_control()
+
+        # a positive control (True) means that light can be turned on
+        if ctr_ultrasonic:
+
+            if ctr_pir:
+
+                # turn on all lights
+                if ctr_beacon["desk_light"]:
+                    desk_light_on()
+                else:
+                    print("desk light turned off by beacon")
+                    desk_light_off()
+
+                # turn of the desk light but on the top light if beacon farther then threshold
+                if ctr_beacon["top_light"]:
+                    top_light_on()
+
+                else:
+                    print("top light turned off by beacon")
+                    top_light_off()
+
+            # turn of the lights if pir detected occupancy
             else:
-                print("turned off by beacon")
-                GPIO.output(26, 0)
-                GPIO.output(19, 0)
-                GPIO.output(13, 1)
+                print("turned off by pir")
+                all_lights_off()
 
-        # turn of the lights if pir detected occupancy
+        # turn of the lights if ultrasonic detected motion
         else:
-            print("turned off by pir")
-            GPIO.output(26, 0)
-            GPIO.output(19, 0)
-            GPIO.output(13, 1)
+            print("turned off by ultrasonic")
+            all_lights_off()
 
-    # turn of the lights if ultrasonic detected motion
-    else:
-        print("turned off by ultrasonic")
-        GPIO.output(26, 0)
-        GPIO.output(19, 0)
-        GPIO.output(13, 1)
+        # todo write control signal to database
 
-    time.sleep(1)
+        time.sleep(5)
