@@ -233,37 +233,40 @@ if __name__ == "__main__":
 
             signals = [0, 0]
 
-        # control for how long UV lights were turned on
-        for ix, light_type in enumerate(lights_dict.keys()):
-
-            light_info = lights_dict[light_type]
-            now = time.time()
-
-            if (signals[ix] == 1) and (light_info['status'] == 0):
-
-                print(f"{dt.datetime.now().isoformat()} - "
-                      f"{light_type} turned on")
-
-                light_info['status'] = 1
-
-                light_info['time_on'] = now
-
-            if (now - light_info['time_on']) > light_info['max_time_on']:
-
-                light_switch(signal = 0, light_key=light_type)
-
-                print(f"{dt.datetime.now().isoformat()} - "
-                      f"{light_type} turned off")
-
-                light_info['status'] = 0
-
-                if light_type == 'top':
-
-                    occupancy_detected = False
-
         if 0 in signals:
 
             occupancy_detected = True
+
+        if occupancy_detected:
+            # control for how long UV lights were turned on
+            for ix, light_type in enumerate(lights_dict.keys()):
+
+                light_info = lights_dict[light_type]
+                now = time.time()
+
+                if (signals[ix] == 1) and (light_info['status'] == 0):
+
+                    print(f"{dt.datetime.now().isoformat()} - "
+                          f"{light_type} turned on")
+
+                    light_info['status'] = 1
+
+                    light_info['time_on'] = now
+
+                if (now - light_info['time_on']) > light_info['max_time_on']:
+
+                    light_switch(signal = 0, light_key=light_type)
+
+                    print(f"{dt.datetime.now().isoformat()} - "
+                          f"{light_type} turned off")
+
+                    light_info['status'] = 0
+
+                    if light_type == 'top':
+
+                        occupancy_detected = False
+
+
 
 
         # write control signal to database
