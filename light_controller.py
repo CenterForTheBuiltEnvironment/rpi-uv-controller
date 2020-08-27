@@ -254,6 +254,11 @@ if __name__ == "__main__":
 
                 light_switch(signal = 0, light_key=light_type)
 
+                print(f"{dt.datetime.now().isoformat()} - "
+                      f"{light_type} turned off")
+
+                light_info['status'] = 0
+
                 if light_type == 'top':
 
                     occupancy_detected = False
