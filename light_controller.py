@@ -159,6 +159,10 @@ def all_lights_off():
     top_light(signal=0)
     GPIO.output(all_off_light_pin, 1)
 
+    for light_key in lights_dict.keys():
+
+        lights_dict[light_key]['status'] = 0
+
 
 # todo combine next two functions into one and get info from lights dict
 def desk_light(signal):
