@@ -163,9 +163,6 @@ def all_lights_off():
 
         lights_dict[light_key]['status'] = 0
 
-        print(f"{dt.datetime.now().isoformat()} - "
-              f"{light_key} turned off")
-
 
 # todo combine next two functions into one and get info from lights dict
 def desk_light(signal):
@@ -260,7 +257,7 @@ if __name__ == "__main__":
 
                     light_info['time_on'] = now
 
-                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1) and (signals[ix] == 0):
+                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1):
 
                     light_switch(signal = 0, light_key=light_type)
 
