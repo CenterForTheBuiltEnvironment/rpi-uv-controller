@@ -1,9 +1,18 @@
-from gpiozero import Button
-button = Button(2)
+import RPi.GPIO as GPIO
+import time
 
-if __name__ == '__main__':
+#Set warnings off (optional)
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
 
-    while True:
+#Set Button and LED pins
+Button = 23
 
-        button.wait_for_press()
-        print('You pushed me')
+#Setup Button and LED
+GPIO.setup(Button,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+
+
+while True:
+    button_state = GPIO.input(Button)
+    print(button_state)
+    time.sleep(0.5)
