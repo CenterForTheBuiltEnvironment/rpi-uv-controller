@@ -6,6 +6,7 @@ pid=$!
 wait $pid
 
 # todo remove this line
+echo "Removing the database file"
 rm -f database.db
 
 sleep 3

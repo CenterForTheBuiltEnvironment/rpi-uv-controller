@@ -182,11 +182,22 @@ def main():
     # query_last_entry_by_id = f"SELECT * FROM pir WHERE time_stamp > {now}"
     # rows = read_db(conn, query_last_entry_by_id)
 
+    # # query ultrasonic data
+    # query = f"SELECT * FROM calibration_ultrasonic"
+    # rows = read_db(conn, query)
+    #
+    # with open("ultrasonic_calibration.csv", "w", newline="") as csv_file:
+    #     writer = csv.writer(
+    #         csv_file, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
+    #     )
+    #     for row in rows:
+    #         writer.writerow(row)
+
     # query ultrasonic data
-    query = f"SELECT * FROM calibration_ultrasonic"
+    query = f"SELECT * FROM control_signals"
     rows = read_db(conn, query)
 
-    with open("ultrasonic_calibration.csv", "w", newline="") as csv_file:
+    with open("control_signals.csv", "w", newline="") as csv_file:
         writer = csv.writer(
             csv_file, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
         )
