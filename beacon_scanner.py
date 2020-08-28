@@ -30,9 +30,9 @@ def scan_beacons():
     scanner = Scanner().withDelegate(ScanDelegate())
 
     # devices to scan
-    beacons = beacons_ids.beacons_to_track.copy()
+    beacons = {}
 
-    for beacon in beacons.keys():
+    for beacon in beacons_ids.beacons_to_track.keys():
         beacons[beacon]['previous_rssi'] = 9999
 
     # Main Loop that scans for the beacons
