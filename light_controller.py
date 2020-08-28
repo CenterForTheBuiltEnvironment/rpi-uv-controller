@@ -151,9 +151,9 @@ def beacons_control():
     return {"top": top_light_control, "desk": desk_light_control}
 
 
-def light_switch(signal=0, _light_key='top'):
+def light_switch(signal=0, light_key='top'):
 
-    GPIO.output(lights_dict[_light_key]["pin"], signal)
+    GPIO.output(lights_dict[light_key]["pin"], signal)
 
 
 if __name__ == "__main__":
@@ -185,26 +185,26 @@ if __name__ == "__main__":
 
                 sensor = "pir"
 
-                for light_key in lights_dict.keys():
+                for light_type in lights_dict.keys():
 
-                    lights_dict[light_key]['ctr_signal'] = 0
+                    lights_dict[light_type]['ctr_signal'] = 0
 
         # turn of the lights if ultrasonic detected motion
         else:
 
             sensor = "ultrasonic"
 
-            for light_key in lights_dict.keys():
+            for light_type in lights_dict.keys():
 
-                lights_dict[light_key]['ctr_signal'] = 0
+                lights_dict[light_type]['ctr_signal'] = 0
 
 
         # turn off lights if occupancy was detected
-        for light_key in lights_dict.keys():
+        for light_type in lights_dict.keys():
 
             if lights_dict[light_type]['ctr_signal'] == 0:
 
-                light_switch(signal= 0, _light_key=light_key)
+                light_switch(signal= 0, light_key=light_type)
 
                 lights_dict[light_type]['status'] = 0
 
@@ -224,7 +224,7 @@ if __name__ == "__main__":
                     lights_dict[light_type]['status'] = 1
                     lights_dict[light_type]['time_on'] = now
 
-                    light_switch(signal=1, _light_key=light_type)
+                    light_switch(signal=1, light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned on")
@@ -232,7 +232,7 @@ if __name__ == "__main__":
                 elif ((now - lights_dict[light_type]['time_on']) > lights_dict[light_type]['max_time_on']) and (lights_dict[light_type]['status'] == 1):
 
                     lights_dict[light_type]['status'] = 0
-                    light_switch(signal = 0, _light_key=light_type)
+                    light_switch(signal = 0, light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned off since was on for too long")
