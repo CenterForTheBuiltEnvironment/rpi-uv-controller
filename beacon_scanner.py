@@ -2,7 +2,7 @@
 
 from bluepy.btle import Scanner, DefaultDelegate
 import time
-import beacons_ids
+import VARIABLES
 import db_handler
 import datetime as dt
 
@@ -32,13 +32,13 @@ def scan_beacons():
     # Main Loop that scans for the beacons
     while True:
 
-        devices = scanner.scan(3.0)
+        devices = scanner.scan(VARIABLES.beacon_scanning_interval)
 
         conn = db_handler.connect_db()
 
         for dev in devices:
 
-            if dev.addr in beacons_ids.beacons_to_track.keys():
+            if dev.addr in VARIABLES.beacons_to_track.keys():
 
                 values = (dev.addr, int(time.time()), dev.rssi)
 

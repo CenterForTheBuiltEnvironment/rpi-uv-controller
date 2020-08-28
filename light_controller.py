@@ -7,18 +7,8 @@ import time
 import numpy as np
 import datetime as dt
 
-import beacons_ids
+import VARIABLES
 import db_handler
-
-# delay between last signal and lights can be turned on
-delay_beacons = 30  # in seconds
-delay_pir = 30  # in seconds
-delay_kill_switch = 30  # in seconds
-
-# threshold for ultrasonic sensor to detect movement
-threshold_ultrasonic_std = (
-    0.02  # calculated using the calibration data, this is the std
-)
 
 # previous day number, needed to turn on lights at midnight
 previous_day = 9999
@@ -27,7 +17,7 @@ lights_dict = {
     "top": {
         "status": 0,
         "time_on": 0,
-        "max_time_on": 60,
+        "max_time_on": VARIABLES.max_time_on_lights_top,
         "pin": 19,
         "ctr_signal": 0,
         "occupancy_detected": True
@@ -35,7 +25,7 @@ lights_dict = {
     "desk": {
         "status": 0,
         "time_on": 0,
-        "max_time_on": 60,
+        "max_time_on": VARIABLES.max_time_on_lights_desk,
         "pin": 26,
         "ctr_signal": 0,
         "occupancy_detected": True
@@ -72,9 +62,7 @@ def ultrasonic_control():
 
         std = rows[0][0]
 
-        # print("standard deviation", std)
-
-        if std > threshold_ultrasonic_std:
+        if std > VARIABLES.threshold_ultrasonic_std:
             return False
         else:
             return True
@@ -96,7 +84,7 @@ def kill_switch_control():
 
         time_button_pressed = rows[0][0]
 
-        if time.time() - time_button_pressed < delay_kill_switch:
+        if time.time() - time_button_pressed < VARIABLES.delay_kill_switch:
             return False
         else:
             return True
@@ -119,7 +107,7 @@ def pir_control():
 
         presence = rows[0][0]
 
-        if (presence == 1) or (time.time() - rows[0][1] < delay_pir):
+        if (presence == 1) or (time.time() - rows[0][1] < VARIABLES.delay_pir):
             return False
         else:
             return True
@@ -151,13 +139,13 @@ def beacons_control():
     for index, row in enumerate(rows):
 
         # check that the index is among those to track
-        if row[0] in beacons_ids.beacons_to_track.keys():
+        if row[0] in VARIABLES.beacons_to_track.keys():
 
             # check against time threshold
-            if time.time() - row[2] < delay_beacons:
+            if time.time() - row[2] < VARIABLES.delay_beacons:
 
                 # if not enough time has elapsed check signal strength
-                if row[1] < beacons_ids.beacons_to_track[row[0]]:
+                if row[1] < VARIABLES.beacons_to_track[row[0]]:
 
                     top_light_beacon_array[index] = True
 
@@ -186,7 +174,7 @@ def beacons_control():
     return {"top": top_light_control, "desk": desk_light_control}
 
 
-def light_switch(signal=0, light_key='top'):
+def send_ctr_relay(signal=0, light_key='top'):
 
     GPIO.output(lights_dict[light_key]["pin"], signal)
 
@@ -251,7 +239,7 @@ if __name__ == "__main__":
 
             if lights_dict[light_type]['ctr_signal'] == 0:
 
-                light_switch(signal= 0, light_key=light_type)
+                send_ctr_relay(signal= 0, light_key=light_type)
 
                 if lights_dict[light_type]['status'] == 1:
                     print(f"{dt.datetime.now().isoformat()} - "
@@ -275,7 +263,7 @@ if __name__ == "__main__":
                     lights_dict[light_type]['status'] = 1
                     lights_dict[light_type]['time_on'] = now
 
-                    light_switch(signal=1, light_key=light_type)
+                    send_ctr_relay(signal=1, light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned on")
@@ -283,7 +271,7 @@ if __name__ == "__main__":
                 elif ((now - lights_dict[light_type]['time_on']) > lights_dict[light_type]['max_time_on']) and (lights_dict[light_type]['status'] == 1):
 
                     lights_dict[light_type]['status'] = 0
-                    light_switch(signal = 0, light_key=light_type)
+                    send_ctr_relay(signal = 0, light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned off since was on for too long")
