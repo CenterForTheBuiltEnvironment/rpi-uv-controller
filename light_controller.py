@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
                     light_info['time_on'] = now
 
-                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1):
+                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1) and (signals[ix] == 0):
 
                     light_switch(signal = 0, light_key=light_type)
 

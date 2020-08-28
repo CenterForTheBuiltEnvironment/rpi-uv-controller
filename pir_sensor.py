@@ -27,11 +27,6 @@ if __name__ == "__main__":
 
             previous_pir_reading = pir_signal
 
-            if pir_signal == 1:
-
-                # turn off all lights immediately
-                light_controller.all_lights_off()
-
             values = (int(time.time()), pir_signal)
 
             conn = db_handler.connect_db()
