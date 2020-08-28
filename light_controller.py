@@ -69,11 +69,11 @@ def ultrasonic_control():
             return True
 
     except IndexError:
-        return False
+        return True
 
     except Error as e:
         print (e)
-        return False
+        return True
 
 
 def kill_switch_control():
@@ -96,11 +96,11 @@ def kill_switch_control():
             return True
 
     except IndexError:
-        return False
+        return True
 
     except Error as e:
         print(e)
-        return False
+        return True
 
 
 def pir_control():
@@ -125,11 +125,11 @@ def pir_control():
             return True
 
     except IndexError:
-        return False
+        return True
 
     except Error as e:
         print(e)
-        return False
+        return True
 
 
 def beacons_control():

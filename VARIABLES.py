@@ -8,9 +8,9 @@ beacons_to_track = {
 
 # time after which lights turn on after last occupancy was detected by the relative sensor
 
-delay_beacons = 30 * 60
-delay_pir = 30 * 60
-delay_kill_switch = 30 * 60
+delay_beacons = 1 * 60
+delay_pir = 1 * 60
+delay_kill_switch = 1 * 60
 
 # max time lights can stay on after person leaves the space
 
