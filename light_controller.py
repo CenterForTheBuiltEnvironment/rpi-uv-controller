@@ -20,17 +20,17 @@ lights_dict = {
         "max_time_on": VARIABLES.max_time_on_lights_top,
         "pin": 19,
         "ctr_signal": 0,
-        "occupancy_detected": True
-        },
+        "occupancy_detected": True,
+    },
     "desk": {
         "status": 0,
         "time_on": 0,
         "max_time_on": VARIABLES.max_time_on_lights_desk,
         "pin": 26,
         "ctr_signal": 0,
-        "occupancy_detected": True
-        },
-    }
+        "occupancy_detected": True,
+    },
+}
 
 all_off_light_pin = 13
 
@@ -40,8 +40,8 @@ GPIO.setmode(GPIO.BCM)
 # https://pinout.xyz
 
 # set pin role
-GPIO.setup(lights_dict['desk']["pin"], GPIO.OUT)  # green
-GPIO.setup(lights_dict['top']["pin"], GPIO.OUT)  # yellow
+GPIO.setup(lights_dict["desk"]["pin"], GPIO.OUT)  # green
+GPIO.setup(lights_dict["top"]["pin"], GPIO.OUT)  # yellow
 GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
 # wait for few seconds before the script starts so sensors can start collecting data
@@ -69,6 +69,7 @@ def ultrasonic_control():
 
     except IndexError:
         return False
+
 
 def kill_switch_control():
 
@@ -100,7 +101,9 @@ def pir_control():
         conn = db_handler.connect_db()
 
         # query only last entry by beacon id
-        query_last_entry_by_id = f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
+        query_last_entry_by_id = (
+            f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
+        )
         rows = db_handler.read_db(conn, query_last_entry_by_id)
 
         conn.close()
@@ -114,7 +117,6 @@ def pir_control():
 
     except IndexError:
         return False
-
 
 
 def beacons_control():
@@ -174,7 +176,7 @@ def beacons_control():
     return {"top": top_light_control, "desk": desk_light_control}
 
 
-def send_ctr_relay(signal=0, light_key='top'):
+def send_ctr_relay(signal=0, light_key="top"):
 
     GPIO.output(lights_dict[light_key]["pin"], signal)
 
@@ -201,10 +203,10 @@ if __name__ == "__main__":
                     sensor = "beacon"
 
                     # control desk light
-                    lights_dict["desk"]['ctr_signal'] = int(ctr_beacon["desk"])
+                    lights_dict["desk"]["ctr_signal"] = int(ctr_beacon["desk"])
 
                     # control top light
-                    lights_dict["top"]['ctr_signal'] = int(ctr_beacon["top"])
+                    lights_dict["top"]["ctr_signal"] = int(ctr_beacon["top"])
 
                 # turn of the lights if pir detected occupancy
                 else:
@@ -213,7 +215,7 @@ if __name__ == "__main__":
 
                     for light_type in lights_dict.keys():
 
-                        lights_dict[light_type]['ctr_signal'] = 0
+                        lights_dict[light_type]["ctr_signal"] = 0
 
             # turn of the lights if ultrasonic detected motion
             else:
@@ -222,7 +224,7 @@ if __name__ == "__main__":
 
                 for light_type in lights_dict.keys():
 
-                    lights_dict[light_type]['ctr_signal'] = 0
+                    lights_dict[light_type]["ctr_signal"] = 0
 
         # turn of the lights if kill switch was pressed
         else:
@@ -231,24 +233,23 @@ if __name__ == "__main__":
 
             for light_type in lights_dict.keys():
 
-                lights_dict[light_type]['ctr_signal'] = 0
-
+                lights_dict[light_type]["ctr_signal"] = 0
 
         # turn off lights if occupancy was detected
         for light_type in lights_dict.keys():
 
-            if lights_dict[light_type]['ctr_signal'] == 0:
+            if lights_dict[light_type]["ctr_signal"] == 0:
 
-                send_ctr_relay(signal= 0, light_key=light_type)
+                send_ctr_relay(signal=0, light_key=light_type)
 
-                if lights_dict[light_type]['status'] == 1:
-                    print(f"{dt.datetime.now().isoformat()} - "
-                          f"{light_type} turned off")
+                if lights_dict[light_type]["status"] == 1:
+                    print(
+                        f"{dt.datetime.now().isoformat()} - " f"{light_type} turned off"
+                    )
 
-                lights_dict[light_type]['status'] = 0
+                lights_dict[light_type]["status"] = 0
 
-                lights_dict[light_type]['occupancy_detected'] = True
-
+                lights_dict[light_type]["occupancy_detected"] = True
 
         # finally turn on lights if needed
         for light_type in lights_dict.keys():
@@ -256,28 +257,35 @@ if __name__ == "__main__":
             now = time.time()
 
             # function that decides whether or not lights needs to be turned on
-            if lights_dict[light_type]['occupancy_detected']:
+            if lights_dict[light_type]["occupancy_detected"]:
 
-                if (lights_dict[light_type]['ctr_signal'] == 1) and (lights_dict[light_type]['status'] == 0):
+                if (lights_dict[light_type]["ctr_signal"] == 1) and (
+                    lights_dict[light_type]["status"] == 0
+                ):
 
-                    lights_dict[light_type]['status'] = 1
-                    lights_dict[light_type]['time_on'] = now
+                    lights_dict[light_type]["status"] = 1
+                    lights_dict[light_type]["time_on"] = now
 
                     send_ctr_relay(signal=1, light_key=light_type)
 
-                    print(f"{dt.datetime.now().isoformat()} - "
-                          f"{light_type} turned on")
+                    print(
+                        f"{dt.datetime.now().isoformat()} - " f"{light_type} turned on"
+                    )
 
-                elif ((now - lights_dict[light_type]['time_on']) > lights_dict[light_type]['max_time_on']) and (lights_dict[light_type]['status'] == 1):
+                elif (
+                    (now - lights_dict[light_type]["time_on"])
+                    > lights_dict[light_type]["max_time_on"]
+                ) and (lights_dict[light_type]["status"] == 1):
 
-                    lights_dict[light_type]['status'] = 0
-                    send_ctr_relay(signal = 0, light_key=light_type)
+                    lights_dict[light_type]["status"] = 0
+                    send_ctr_relay(signal=0, light_key=light_type)
 
-                    print(f"{dt.datetime.now().isoformat()} - "
-                          f"{light_type} turned off since was on for too long")
+                    print(
+                        f"{dt.datetime.now().isoformat()} - "
+                        f"{light_type} turned off since was on for too long"
+                    )
 
-                    lights_dict[light_type]['occupancy_detected'] = False
-
+                    lights_dict[light_type]["occupancy_detected"] = False
 
         # reset everything at midnight
         if dt.datetime.now().hour == 0 and dt.datetime.now().day != previous_day:
@@ -286,11 +294,10 @@ if __name__ == "__main__":
 
             for light_type in lights_dict.keys():
 
-                lights_dict[light_type]['occupancy_detected'] = True
-
+                lights_dict[light_type]["occupancy_detected"] = True
 
         # turn on red led if all lights are off
-        if 1 not in [lights_dict[x]['status'] for x in lights_dict.keys()]:
+        if 1 not in [lights_dict[x]["status"] for x in lights_dict.keys()]:
 
             GPIO.output(all_off_light_pin, 1)
 
@@ -298,15 +305,21 @@ if __name__ == "__main__":
 
             GPIO.output(all_off_light_pin, 0)
 
-
         # write control signal to database
         connection = db_handler.connect_db()
 
         for light_type in lights_dict.keys():
 
-            values = (int(time.time()), sensor, light_type, lights_dict[light_type]['status'])
-            sql = " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) " \
-                  "VALUES(?,?,?,?) "
+            values = (
+                int(time.time()),
+                sensor,
+                light_type,
+                lights_dict[light_type]["status"],
+            )
+            sql = (
+                " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) "
+                "VALUES(?,?,?,?) "
+            )
             row_index = db_handler.write_db(connection, sql, values)
 
         connection.close()
