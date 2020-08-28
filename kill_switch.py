@@ -48,7 +48,7 @@ while True:
 
         print(
             f"button -- {dt.datetime.now().isoformat()} - index_db: "
-            f"{index}, button_state: {reading}"
+            f"{index}, button state: {reading}"
         )
 
         # close connection
