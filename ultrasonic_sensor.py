@@ -9,7 +9,7 @@ import db_handler
 time_wrote_to_db = time.time()
 logging_time = 10
 sampling_time = 0.5
-previous_std = 0
+previous_std = 9999
 
 # # create calibration table
 # db_handler.create_ultrasonic_calibration_table()
