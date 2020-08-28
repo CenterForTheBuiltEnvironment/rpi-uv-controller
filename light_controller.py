@@ -78,7 +78,8 @@ def ultrasonic_control():
             return False
         else:
             return True
-    except:
+
+    except IndexError:
         return False
 
 def kill_switch_control():
@@ -99,27 +100,33 @@ def kill_switch_control():
             return False
         else:
             return True
-    except:
+
+    except IndexError:
         return False
 
 
 def pir_control():
 
-    # query the last entries
-    conn = db_handler.connect_db()
+    try:
+        # query the last entries
+        conn = db_handler.connect_db()
 
-    # query only last entry by beacon id
-    query_last_entry_by_id = f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
-    rows = db_handler.read_db(conn, query_last_entry_by_id)
+        # query only last entry by beacon id
+        query_last_entry_by_id = f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
+        rows = db_handler.read_db(conn, query_last_entry_by_id)
 
-    conn.close()
+        conn.close()
 
-    presence = rows[0][0]
+        presence = rows[0][0]
 
-    if (presence == 1) or (time.time() - rows[0][1] < delay_pir):
+        if (presence == 1) or (time.time() - rows[0][1] < delay_pir):
+            return False
+        else:
+            return True
+
+    except IndexError:
         return False
-    else:
-        return True
+
 
 
 def beacons_control():

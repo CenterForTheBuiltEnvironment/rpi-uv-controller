@@ -6,3 +6,4 @@ sudo pkill -f pir_sensor.py
 sudo pkill -f beacon_scanner.py
 sudo pkill -f light_controller.py
 sudo pkill -f ultrasonic_sensor.py
+sudo pkill -f kill_switch.py
