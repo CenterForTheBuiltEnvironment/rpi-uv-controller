@@ -197,7 +197,7 @@ def main():
     query = f"SELECT * FROM control_signals"
     rows = read_db(conn, query)
 
-    with open("control_signals.csv", "w", newline="") as csv_file:
+    with open("./control_signals_analysis/control_signals.csv", "w", newline="") as csv_file:
         writer = csv.writer(
             csv_file, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
         )

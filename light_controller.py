@@ -337,4 +337,6 @@ if __name__ == "__main__":
 
         connection.close()
 
+        # todo clear control_signals table every week
+
         time.sleep(1)
