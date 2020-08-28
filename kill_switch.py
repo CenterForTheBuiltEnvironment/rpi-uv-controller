@@ -16,7 +16,7 @@ previous_state = 9999
 GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # create table to store button presses data
-db_handler.create_ultrasonic_table()
+db_handler.create_button_table()
 
 # sql statement to add new entries to table
 sql = """ INSERT INTO button 
