@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import time
 import numpy as np
 import datetime as dt
+from sqlite3 import Error
 
 import VARIABLES
 import db_handler
@@ -70,6 +71,10 @@ def ultrasonic_control():
     except IndexError:
         return False
 
+    except Error as e:
+        print (e)
+        return False
+
 
 def kill_switch_control():
 
@@ -91,6 +96,10 @@ def kill_switch_control():
             return True
 
     except IndexError:
+        return False
+
+    except Error as e:
+        print(e)
         return False
 
 
@@ -116,6 +125,10 @@ def pir_control():
             return True
 
     except IndexError:
+        return False
+
+    except Error as e:
+        print(e)
         return False
 
 

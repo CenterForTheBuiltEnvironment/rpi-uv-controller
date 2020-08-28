@@ -14,7 +14,6 @@ previous_pir_reading = 0
 
 # create the table
 db_handler.create_pir_table()
-time.sleep(2)
 
 sql = " INSERT INTO pir(time_stamp, presence) VALUES(?,?) "
 
