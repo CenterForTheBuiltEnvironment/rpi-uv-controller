@@ -34,21 +34,25 @@ GPIO.setup(desk_light_pin, GPIO.OUT)  # green
 GPIO.setup(top_light_pin, GPIO.OUT)  # yellow
 GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
-# stores in memory if occupancy was detected
-occupancy_detected = True
+# previous day number, needed to turn on lights at midnight
+previous_day = 9999
 
 lights_dict = {
     "top": {
         "status": 0,
         "time_on": 0,
         "max_time_on": 60,
-        "pin": 19  # todo replace top_light_pin with this
+        "pin": 19,  # todo replace top_light_pin with this
+        "ctr_signal": 0,
+        "occupancy_detected": True
         },
     "desk": {
         "status": 0,
         "time_on": 0,
         "max_time_on": 60,
-        "pin": 26  # todo replace desk_light_pin with this
+        "pin": 26,  # todo replace desk_light_pin with this
+        "ctr_signal": 0,
+        "occupancy_detected": True
         },
     }
 
@@ -150,7 +154,7 @@ def beacons_control():
     else:
         desk_light_control = True
 
-    return {"top_light": top_light_control, "desk_light": desk_light_control}
+    return {"top": top_light_control, "desk": desk_light_control}
 
 
 def all_lights_off():
@@ -177,9 +181,9 @@ def top_light(signal):
     GPIO.output(all_off_light_pin, 0)
 
 
-def light_switch(signal=0, light_key='top'):
+def light_switch(signal=0, _light_key='top'):
 
-    GPIO.output(lights_dict[light_key]["pin"], signal)
+    GPIO.output(lights_dict[_light_key]["pin"], signal)
 
     if signal == 1:
 
@@ -199,8 +203,6 @@ if __name__ == "__main__":
         ctr_pir = pir_control()
         ctr_ultrasonic = ultrasonic_control()
 
-        print (ctr_beacon, ctr_pir, ctr_ultrasonic)
-
         # a positive control (True) means that light can be turned on
         if ctr_ultrasonic:
 
@@ -208,87 +210,93 @@ if __name__ == "__main__":
 
                 sensor = "beacon"
 
-                if occupancy_detected:
+                # control desk light
+                lights_dict["desk"]['ctr_signal'] = int(ctr_beacon["desk"])
 
-                    # control desk light
-                    desk_light(signal=ctr_beacon["desk_light"])
-
-                    # control top light
-                    top_light(signal=ctr_beacon["top_light"])
-
-                    signals = [int(ctr_beacon["desk_light"]), int(ctr_beacon["top_light"])]  # todo add this info to lights_dict
-
-                if 1 not in signals:
-
-                    all_lights_off()
+                # control top light
+                lights_dict["top"]['ctr_signal'] = int(ctr_beacon["top"])
 
             # turn of the lights if pir detected occupancy
             else:
 
                 sensor = "pir"
-                all_lights_off()
 
-                signals = [0, 0]
+                for light_key in lights_dict.keys():
+
+                    lights_dict[light_key]['ctr_signal'] = 0
 
         # turn of the lights if ultrasonic detected motion
         else:
 
             sensor = "ultrasonic"
 
-            all_lights_off()
+            for light_key in lights_dict.keys():
 
-            signals = [0, 0]
+                lights_dict[light_key]['ctr_signal'] = 0
 
-        if 0 in signals:
 
-            occupancy_detected = True
+        # turn off lights if occupancy was detected
+        for light_key in lights_dict.keys():
 
-        if occupancy_detected:
-            # control for how long UV lights were turned on
-            for ix, light_type in enumerate(lights_dict.keys()):
+            if lights_dict[light_key]['ctr_signal'] == 0:
 
-                light_info = lights_dict[light_type]
-                now = time.time()
+                light_switch(signal= 0, _light_key=light_key)
 
-                if (signals[ix] == 1) and (light_info['status'] == 0):
+                print("occupancy detected")
+                lights_dict[light_key]['occupancy_detected'] = True
+
+
+        # finally turn on lights if needed
+        for light_type in lights_dict.keys():
+
+            light_info = lights_dict[light_type]
+            now = time.time()
+
+            # function that decides whether or not lights needs to be turned on
+            if light_info['occupancy_detected']:
+
+                if (light_info['ctr_signal'] == 1) and (light_info['status'] == 0):
+
+                    light_info['status'] = 1
+                    light_info['time_on'] = now
+
+                    light_switch(signal=1, _light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned on")
 
-                    light_info['status'] = 1
-
-                    light_info['time_on'] = now
-
                 elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1):
 
-                    light_switch(signal = 0, light_key=light_type)
+                    light_info['status'] = 0
+                    light_switch(signal = 0, _light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
-                          f"{light_type} turned off")
+                          f"{light_type} turned off since was on for too long")
 
-                    light_info['status'] = 0
+                    light_info['occupancy_detected'] = False
 
-                    if light_type == 'top':
+        # reset everything at midnight
+        if dt.datetime.now().hour == 0 and dt.datetime.now().day != previous_day:
 
-                        print("lights were on for long enough")
+            previous_day = dt.datetime.now().day
 
-                        occupancy_detected = False
+            for light_type in lights_dict.keys():
+
+                lights_dict[light_type]['occupancy_detected'] = True
 
 
         # write control signal to database
         connection = db_handler.connect_db()
 
-        for ix, light_type in enumerate(["desk", "top"]):  # todo replace this array with keys lights dict
+        for light_type in lights_dict.keys():
 
-            values = (int(time.time()), sensor, light_type, signals[ix])
+            light_info = lights_dict[light_type]
+
+            values = (int(time.time()), sensor, light_type, light_info['status'])
             sql = " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) " \
                   "VALUES(?,?,?,?) "
             row_index = db_handler.write_db(connection, sql, values)
 
-            # print(values)
-
         connection.close()
 
         time.sleep(1)
-
-        # todo turn the lights on at midnight
