@@ -10,7 +10,7 @@ GPIO.setmode(GPIO.BCM)
 # Set Button and LED pins
 button_pin = 2
 
-previous_state = 9999
+previous_state = 1
 
 # Setup Button and LED
 GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
