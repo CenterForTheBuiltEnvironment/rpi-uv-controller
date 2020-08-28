@@ -82,6 +82,21 @@ def create_pir_table():
     conn.close()
 
 
+def create_button_table():
+    conn = connect_db()
+
+    sql = (
+        "CREATE TABLE IF NOT EXISTS button "
+        "( id integer PRIMARY KEY, "
+        "time_stamp int, "
+        "status int)"
+    )
+
+    create_table(conn, sql)
+
+    conn.close()
+
+
 def create_ultrasonic_calibration_table():
     conn = connect_db()
 
