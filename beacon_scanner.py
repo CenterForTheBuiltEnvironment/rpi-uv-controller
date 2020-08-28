@@ -29,17 +29,10 @@ def scan_beacons():
     # initialize the scanner
     scanner = Scanner().withDelegate(ScanDelegate())
 
-    # devices to scan
-    beacons = {}
-
-    for beacon in beacons_ids.beacons_to_track.keys():
-        beacons[beacon] = {}
-        beacons[beacon]['previous_rssi'] = 9999
-
     # Main Loop that scans for the beacons
     while True:
 
-        devices = scanner.scan(5.0)
+        devices = scanner.scan(3.0)
 
         conn = db_handler.connect_db()
 
@@ -47,20 +40,16 @@ def scan_beacons():
 
             if dev.addr in beacons_ids.beacons_to_track.keys():
 
-                if dev.rssi < beacons[dev.addr]['previous_rssi'] - 2 or dev.rssi > beacons[dev.addr]['previous_rssi'] + 2:
+                values = (dev.addr, int(time.time()), dev.rssi)
 
-                    beacons[dev.addr]['previous_rssi'] = dev.rssi
+                sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
+                          VALUES(?,?,?) """
 
-                    values = (dev.addr, int(time.time()), dev.rssi)
+                index = db_handler.write_db(conn, sql, values)
 
-                    sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
-                              VALUES(?,?,?) """
-
-                    index = db_handler.write_db(conn, sql, values)
-
-                    print(
-                        f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
-                    )
+                # print(
+                #     f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
+                # )
 
         conn.close()
 
