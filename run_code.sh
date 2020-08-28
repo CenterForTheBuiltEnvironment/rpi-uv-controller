@@ -5,6 +5,9 @@ git pull &
 pid=$!
 wait $pid
 
+# todo remove this line
+rm -f database.db
+
 sleep 3
 
 echo "Starting python scripts"
