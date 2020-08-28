@@ -206,6 +206,10 @@ if __name__ == "__main__":
 
                 light_switch(signal= 0, light_key=light_type)
 
+                if lights_dict[light_type]['status'] == 1:
+                    print(f"{dt.datetime.now().isoformat()} - "
+                          f"{light_type} turned off")
+
                 lights_dict[light_type]['status'] = 0
 
                 lights_dict[light_type]['occupancy_detected'] = True
