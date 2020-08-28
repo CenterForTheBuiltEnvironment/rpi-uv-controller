@@ -238,12 +238,15 @@ if __name__ == "__main__":
         # turn off lights if occupancy was detected
         for light_key in lights_dict.keys():
 
-            if lights_dict[light_key]['ctr_signal'] == 0:
+            light_info = lights_dict[light_type]
+
+            if light_info['ctr_signal'] == 0:
 
                 light_switch(signal= 0, _light_key=light_key)
 
-                print("occupancy detected")
-                lights_dict[light_key]['occupancy_detected'] = True
+                lights_dict['status'] = 0
+
+                light_info['occupancy_detected'] = True
 
 
         # finally turn on lights if needed
