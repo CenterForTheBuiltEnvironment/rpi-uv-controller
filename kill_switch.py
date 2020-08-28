@@ -30,7 +30,7 @@ while True:
     # I am inverting 0 with 1 and 1 with 0 since for button pressed reading == 0
     reading = reading ^ 1
 
-    if reading != previous_state:
+    if (reading != previous_state) and (previous_state == 0):
 
         previous_state = reading
 
