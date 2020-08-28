@@ -49,6 +49,8 @@ def scan_beacons():
 
                 if dev.rssi < beacons[dev.addr]['previous_rssi'] - 2 or dev.rssi > beacons[dev.addr]['previous_rssi'] + 2:
 
+                    beacons[dev.addr]['previous_rssi'] = dev.rssi
+
                     values = (dev.addr, int(time.time()), dev.rssi)
 
                     sql = """ INSERT INTO beacons(device_id, time_stamp, rssi)
