@@ -34,22 +34,24 @@ while True:
 
         previous_state = reading
 
-        # connect to db
-        conn = db_handler.connect_db()
+        print("state changed")
 
-        # prepare values to be stored
-        values = (
-            int(time.time()),
-            reading,
-        )
-
-        # write to db
-        index = db_handler.write_db(conn, sql, values)
-
-        print(
-            f"button -- {dt.datetime.now().isoformat()} - index_db: "
-            f"{index}, button state: {reading}"
-        )
-
-        # close connection
-        conn.close()
+        # # connect to db
+        # conn = db_handler.connect_db()
+        #
+        # # prepare values to be stored
+        # values = (
+        #     int(time.time()),
+        #     reading,
+        # )
+        #
+        # # write to db
+        # index = db_handler.write_db(conn, sql, values)
+        #
+        # print(
+        #     f"button -- {dt.datetime.now().isoformat()} - index_db: "
+        #     f"{index}, button state: {reading}"
+        # )
+        #
+        # # close connection
+        # conn.close()
