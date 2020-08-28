@@ -36,7 +36,7 @@ ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=2)
 
 while True:
 
-    # measure disatnce
+    # measure distance
     distance = round(ultrasonic.distance, 4)
 
     # append to the array of previously measured distances
