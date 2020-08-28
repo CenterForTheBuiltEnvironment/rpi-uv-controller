@@ -13,6 +13,7 @@ import db_handler
 # delay between last signal and lights can be turned on
 delay_beacons = 30  # in seconds
 delay_pir = 30  # in seconds
+delay_kill_switch = 30  # in seconds
 
 # threshold for ultrasonic sensor to detect movement
 threshold_ultrasonic_std = (
@@ -53,6 +54,9 @@ GPIO.setup(lights_dict['desk']["pin"], GPIO.OUT)  # green
 GPIO.setup(lights_dict['top']["pin"], GPIO.OUT)  # yellow
 GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
+# wait for few seconds before the script starts so sensors can start collecting data
+time.sleep(5)
+
 
 def ultrasonic_control():
 
@@ -71,6 +75,27 @@ def ultrasonic_control():
         # print("standard deviation", std)
 
         if std > threshold_ultrasonic_std:
+            return False
+        else:
+            return True
+    except:
+        return False
+
+def kill_switch_control():
+
+    try:
+        # query the last entries
+        conn = db_handler.connect_db()
+
+        # query only last entry by beacon id
+        query = f"SELECT time_stamp FROM button ORDER BY time_stamp DESC LIMIT 1"
+        rows = db_handler.read_db(conn, query)
+
+        conn.close()
+
+        time_button_pressed = rows[0][0]
+
+        if time.time() - time_button_pressed < delay_kill_switch:
             return False
         else:
             return True
@@ -169,33 +194,45 @@ if __name__ == "__main__":
         ctr_beacon = beacons_control()
         ctr_pir = pir_control()
         ctr_ultrasonic = ultrasonic_control()
+        ctr_kill_switch = kill_switch_control()
 
         # a positive control (True) means that light can be turned on
-        if ctr_ultrasonic:
+        if ctr_kill_switch:
 
-            if ctr_pir:
+            if ctr_ultrasonic:
 
-                sensor = "beacon"
+                if ctr_pir:
 
-                # control desk light
-                lights_dict["desk"]['ctr_signal'] = int(ctr_beacon["desk"])
+                    sensor = "beacon"
 
-                # control top light
-                lights_dict["top"]['ctr_signal'] = int(ctr_beacon["top"])
+                    # control desk light
+                    lights_dict["desk"]['ctr_signal'] = int(ctr_beacon["desk"])
 
-            # turn of the lights if pir detected occupancy
+                    # control top light
+                    lights_dict["top"]['ctr_signal'] = int(ctr_beacon["top"])
+
+                # turn of the lights if pir detected occupancy
+                else:
+
+                    sensor = "pir"
+
+                    for light_type in lights_dict.keys():
+
+                        lights_dict[light_type]['ctr_signal'] = 0
+
+            # turn of the lights if ultrasonic detected motion
             else:
 
-                sensor = "pir"
+                sensor = "ultrasonic"
 
                 for light_type in lights_dict.keys():
 
                     lights_dict[light_type]['ctr_signal'] = 0
 
-        # turn of the lights if ultrasonic detected motion
+        # turn of the lights if kill switch was pressed
         else:
 
-            sensor = "ultrasonic"
+            sensor = "switch"
 
             for light_type in lights_dict.keys():
 
