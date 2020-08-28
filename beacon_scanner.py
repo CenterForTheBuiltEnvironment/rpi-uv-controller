@@ -47,9 +47,9 @@ def scan_beacons():
 
                 index = db_handler.write_db(conn, sql, values)
 
-                # print(
-                #     f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
-                # )
+                print(
+                    f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
+                )
 
         conn.close()
 
