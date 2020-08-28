@@ -10,7 +10,7 @@ GPIO.setmode(GPIO.BCM)
 # Set Button and LED pins
 button_pin = 2
 
-previous_state = 1
+previous_state = 0
 
 # Setup Button and LED
 GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -32,8 +32,6 @@ while True:
 
     if (reading != previous_state) and (previous_state == 0):
 
-        previous_state = reading
-
         # connect to db
         conn = db_handler.connect_db()
 
@@ -53,3 +51,5 @@ while True:
 
         # close connection
         conn.close()
+
+    previous_state = reading
