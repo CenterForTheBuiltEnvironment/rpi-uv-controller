@@ -14,25 +14,10 @@ import db_handler
 delay_beacons = 30  # in seconds
 delay_pir = 30  # in seconds
 
-# define the GPIOs pin that control the light
-top_light_pin = 19
-desk_light_pin = 26
-all_off_light_pin = 13
-
 # threshold for ultrasonic sensor to detect movement
 threshold_ultrasonic_std = (
     0.02  # calculated using the calibration data, this is the std
 )
-
-# set up board configuration RPI
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-# https://pinout.xyz
-
-# set pin role
-GPIO.setup(desk_light_pin, GPIO.OUT)  # green
-GPIO.setup(top_light_pin, GPIO.OUT)  # yellow
-GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
 # previous day number, needed to turn on lights at midnight
 previous_day = 9999
@@ -42,7 +27,7 @@ lights_dict = {
         "status": 0,
         "time_on": 0,
         "max_time_on": 60,
-        "pin": 19,  # todo replace top_light_pin with this
+        "pin": 19,
         "ctr_signal": 0,
         "occupancy_detected": True
         },
@@ -50,11 +35,20 @@ lights_dict = {
         "status": 0,
         "time_on": 0,
         "max_time_on": 60,
-        "pin": 26,  # todo replace desk_light_pin with this
+        "pin": 26,
         "ctr_signal": 0,
         "occupancy_detected": True
         },
     }
+
+# set up board configuration RPI
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+# https://pinout.xyz
+
+# set pin role
+GPIO.setup(lights_dict['desk']["pin"], GPIO.OUT)  # green
+GPIO.setup(lights_dict['top']["pin"], GPIO.OUT)  # yellow
 
 
 def ultrasonic_control():
@@ -157,44 +151,14 @@ def beacons_control():
     return {"top": top_light_control, "desk": desk_light_control}
 
 
-def all_lights_off():
-
-    desk_light(signal=0)
-    top_light(signal=0)
-    GPIO.output(all_off_light_pin, 1)
-
-    for light_key in lights_dict.keys():
-
-        lights_dict[light_key]['status'] = 0
-
-
-# todo combine next two functions into one and get info from lights dict
-def desk_light(signal):
-
-    GPIO.output(desk_light_pin, signal)
-    GPIO.output(all_off_light_pin, 0)
-
-
-def top_light(signal):
-
-    GPIO.output(top_light_pin, signal)
-    GPIO.output(all_off_light_pin, 0)
-
-
 def light_switch(signal=0, _light_key='top'):
 
     GPIO.output(lights_dict[_light_key]["pin"], signal)
-
-    if signal == 1:
-
-        GPIO.output(all_off_light_pin, 0)
 
 
 if __name__ == "__main__":
 
     db_handler.create_controller_table()
-
-    all_lights_off()
 
     while True:
 
@@ -238,45 +202,42 @@ if __name__ == "__main__":
         # turn off lights if occupancy was detected
         for light_key in lights_dict.keys():
 
-            light_info = lights_dict[light_type]
-
-            if light_info['ctr_signal'] == 0:
+            if lights_dict[light_type]['ctr_signal'] == 0:
 
                 light_switch(signal= 0, _light_key=light_key)
 
-                lights_dict['status'] = 0
+                lights_dict[light_type]['status'] = 0
 
-                light_info['occupancy_detected'] = True
+                lights_dict[light_type]['occupancy_detected'] = True
 
 
         # finally turn on lights if needed
         for light_type in lights_dict.keys():
 
-            light_info = lights_dict[light_type]
             now = time.time()
 
             # function that decides whether or not lights needs to be turned on
-            if light_info['occupancy_detected']:
+            if lights_dict[light_type]['occupancy_detected']:
 
-                if (light_info['ctr_signal'] == 1) and (light_info['status'] == 0):
+                if (lights_dict[light_type]['ctr_signal'] == 1) and (lights_dict[light_type]['status'] == 0):
 
-                    light_info['status'] = 1
-                    light_info['time_on'] = now
+                    lights_dict[light_type]['status'] = 1
+                    lights_dict[light_type]['time_on'] = now
 
                     light_switch(signal=1, _light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned on")
 
-                elif ((now - light_info['time_on']) > light_info['max_time_on']) and (light_info['status'] == 1):
+                elif ((now - lights_dict[light_type]['time_on']) > lights_dict[light_type]['max_time_on']) and (lights_dict[light_type]['status'] == 1):
 
-                    light_info['status'] = 0
+                    lights_dict[light_type]['status'] = 0
                     light_switch(signal = 0, _light_key=light_type)
 
                     print(f"{dt.datetime.now().isoformat()} - "
                           f"{light_type} turned off since was on for too long")
 
-                    light_info['occupancy_detected'] = False
+                    lights_dict[light_type]['occupancy_detected'] = False
 
         # reset everything at midnight
         if dt.datetime.now().hour == 0 and dt.datetime.now().day != previous_day:
@@ -293,9 +254,7 @@ if __name__ == "__main__":
 
         for light_type in lights_dict.keys():
 
-            light_info = lights_dict[light_type]
-
-            values = (int(time.time()), sensor, light_type, light_info['status'])
+            values = (int(time.time()), sensor, light_type, lights_dict[light_type]['status'])
             sql = " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) " \
                   "VALUES(?,?,?,?) "
             row_index = db_handler.write_db(connection, sql, values)
