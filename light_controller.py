@@ -41,6 +41,8 @@ lights_dict = {
         },
     }
 
+all_off_light_pin = 13
+
 # set up board configuration RPI
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -49,6 +51,7 @@ GPIO.setmode(GPIO.BCM)
 # set pin role
 GPIO.setup(lights_dict['desk']["pin"], GPIO.OUT)  # green
 GPIO.setup(lights_dict['top']["pin"], GPIO.OUT)  # yellow
+GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
 
 def ultrasonic_control():
@@ -243,6 +246,7 @@ if __name__ == "__main__":
 
                     lights_dict[light_type]['occupancy_detected'] = False
 
+
         # reset everything at midnight
         if dt.datetime.now().hour == 0 and dt.datetime.now().day != previous_day:
 
@@ -251,6 +255,16 @@ if __name__ == "__main__":
             for light_type in lights_dict.keys():
 
                 lights_dict[light_type]['occupancy_detected'] = True
+
+
+        # turn on red led if all lights are off
+        if 1 not in [lights_dict[x]['status'] for x in lights_dict.keys()]:
+
+            GPIO.output(all_off_light_pin, 1)
+
+        else:
+
+            GPIO.output(all_off_light_pin, 0)
 
 
         # write control signal to database
