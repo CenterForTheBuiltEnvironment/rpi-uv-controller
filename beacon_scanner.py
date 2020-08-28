@@ -33,6 +33,7 @@ def scan_beacons():
     beacons = {}
 
     for beacon in beacons_ids.beacons_to_track.keys():
+        beacons[beacon] = {}
         beacons[beacon]['previous_rssi'] = 9999
 
     # Main Loop that scans for the beacons
