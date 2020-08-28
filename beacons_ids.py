@@ -12,5 +12,4 @@ The ids should be lowercase
 
 beacons_to_track = {
     "da:f7:89:c4:54:5f": -75,
-    "dd:bb:cc": -10,
 }
