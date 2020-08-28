@@ -199,6 +199,8 @@ if __name__ == "__main__":
         ctr_pir = pir_control()
         ctr_ultrasonic = ultrasonic_control()
 
+        print (ctr_beacon, ctr_pir, ctr_ultrasonic)
+
         # a positive control (True) means that light can be turned on
         if ctr_ultrasonic:
 
