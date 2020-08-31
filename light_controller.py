@@ -10,13 +10,18 @@ from sqlite3 import Error
 
 import VARIABLES
 import db_handler
+import my_logger
+
+# create logger
+logger = my_logger.init_logger("light_controller.log")
 
 # previous day number, needed to turn on lights at midnight
 previous_day = 9999
 
 lights_dict = {
     "top": {
-        "status": 0,
+        "current_state": 0,
+        "previous_state": 0,
         "time_on": 0,
         "max_time_on": VARIABLES.max_time_on_lights_top,
         "pin": 19,
@@ -24,7 +29,8 @@ lights_dict = {
         "occupancy_detected": True,
     },
     "desk": {
-        "status": 0,
+        "current_state": 0,
+        "previous_state": 0,
         "time_on": 0,
         "max_time_on": VARIABLES.max_time_on_lights_desk,
         "pin": 26,
@@ -72,7 +78,7 @@ def ultrasonic_control():
         return True
 
     except Error as e:
-        print (e)
+        print(e)
         return True
 
 
@@ -255,12 +261,12 @@ if __name__ == "__main__":
 
                 send_ctr_relay(signal=0, light_key=light_type)
 
-                if lights_dict[light_type]["status"] == 1:
+                if lights_dict[light_type]["current_state"] == 1:
                     print(
                         f"{dt.datetime.now().isoformat()} - " f"{light_type} turned off"
                     )
 
-                lights_dict[light_type]["status"] = 0
+                lights_dict[light_type]["current_state"] = 0
 
                 lights_dict[light_type]["occupancy_detected"] = True
 
@@ -273,10 +279,10 @@ if __name__ == "__main__":
             if lights_dict[light_type]["occupancy_detected"]:
 
                 if (lights_dict[light_type]["ctr_signal"] == 1) and (
-                    lights_dict[light_type]["status"] == 0
+                    lights_dict[light_type]["current_state"] == 0
                 ):
 
-                    lights_dict[light_type]["status"] = 1
+                    lights_dict[light_type]["current_state"] = 1
                     lights_dict[light_type]["time_on"] = now
 
                     send_ctr_relay(signal=1, light_key=light_type)
@@ -288,9 +294,9 @@ if __name__ == "__main__":
                 elif (
                     (now - lights_dict[light_type]["time_on"])
                     > lights_dict[light_type]["max_time_on"]
-                ) and (lights_dict[light_type]["status"] == 1):
+                ) and (lights_dict[light_type]["current_state"] == 1):
 
-                    lights_dict[light_type]["status"] = 0
+                    lights_dict[light_type]["current_state"] = 0
                     send_ctr_relay(signal=0, light_key=light_type)
 
                     print(
@@ -310,7 +316,7 @@ if __name__ == "__main__":
                 lights_dict[light_type]["occupancy_detected"] = True
 
         # turn on red led if all lights are off
-        if 1 not in [lights_dict[x]["status"] for x in lights_dict.keys()]:
+        if 1 not in [lights_dict[x]["current_state"] for x in lights_dict.keys()]:
 
             GPIO.output(all_off_light_pin, 1)
 
@@ -318,24 +324,34 @@ if __name__ == "__main__":
 
             GPIO.output(all_off_light_pin, 0)
 
-        # write control signal to database
-        connection = db_handler.connect_db()
-
         for light_type in lights_dict.keys():
 
-            values = (
-                int(time.time()),
-                sensor,
-                light_type,
-                lights_dict[light_type]["status"],
-            )
-            sql = (
-                " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) "
-                "VALUES(?,?,?,?) "
-            )
-            row_index = db_handler.write_db(connection, sql, values)
+            light_info = lights_dict[light_type]
 
-        connection.close()
+            if light_info["current_state"] != light_info["previous_state"]:
+
+                lights_dict[light_type]["previous_state"] = light_info["current_state"]
+
+                # write control signal to database
+                connection = db_handler.connect_db()
+
+                values = (
+                    int(time.time()),
+                    sensor,
+                    light_type,
+                    light_info["current_state"],
+                )
+                sql = (
+                    " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) "
+                    "VALUES(?,?,?,?) "
+                )
+                row_index = db_handler.write_db(connection, sql, values)
+
+                connection.close()
+
+                logger.info(
+                    f"light control -- {dt.datetime.now().isoformat()} - light: {light_type}, light_state: {light_info['current_state']}"
+                )
 
         # todo clear control_signals table every week
 

@@ -14,7 +14,7 @@ python3 pir_sensor.py &
 python3 ultrasonic_sensor.py &
 python3 kill_switch.py &
 
-sleep 3
+sleep 10
 
 # start controller
 python3 light_controller.py &
