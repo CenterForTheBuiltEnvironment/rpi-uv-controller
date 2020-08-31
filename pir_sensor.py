@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
         if pir_signal != previous_pir_reading:
 
-            logger.info(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
+            logger.info(f"pir_sensor -- {dt.datetime.now().isoformat()} - value: {values[1]}"
             )
 
             previous_pir_reading = pir_signal
