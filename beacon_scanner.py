@@ -5,6 +5,10 @@ import time
 import VARIABLES
 import db_handler
 import datetime as dt
+import my_logger
+
+# create logger
+logger = my_logger.init_logger("beacon_scanner.log")
 
 # BLE Scanning class
 class ScanDelegate(DefaultDelegate):
@@ -47,8 +51,8 @@ def scan_beacons():
 
                 index = db_handler.write_db(conn, sql, values)
 
-                print(
-                    f"beacon_scanner -- {dt.datetime.now().isoformat()} - index_db: {index}, ble_id: {dev.addr}, rssi: {dev.rssi}"
+                logger.info(
+                    f"beacons -- {dt.datetime.now().isoformat()} - ble_id: {dev.addr}, rssi: {dev.rssi}"
                 )
 
         conn.close()

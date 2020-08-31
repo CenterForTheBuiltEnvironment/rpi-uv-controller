@@ -28,7 +28,8 @@ if __name__ == "__main__":
 
         if pir_signal != previous_pir_reading:
 
-            logger.info(f"pir_sensor -- {dt.datetime.now().isoformat()} - value: {pir_signal}"
+            logger.info(
+                f"pir_sensor -- {dt.datetime.now().isoformat()} - value: {pir_signal}"
             )
 
             previous_pir_reading = pir_signal
@@ -38,9 +39,5 @@ if __name__ == "__main__":
             conn = db_handler.connect_db()
             index = db_handler.write_db(conn, sql, values)
             conn.close()
-
-            # print(
-            #     f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
-            # )
 
         time.sleep(0.5)
