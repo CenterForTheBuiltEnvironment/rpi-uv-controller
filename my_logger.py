@@ -5,6 +5,9 @@ import os
 
 def init_logger(log_file_name, name='main', limit_log_file_size=True):
 
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+
     log_file_location = os.path.join(os.getcwd(), "logs", log_file_name)
 
     # logger
