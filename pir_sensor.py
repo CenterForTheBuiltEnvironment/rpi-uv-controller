@@ -3,7 +3,7 @@ import time
 import datetime as dt
 
 import db_handler
-import light_controller
+import my_logger
 
 pir_pin = 6
 GPIO.setwarnings(False)
@@ -15,6 +15,9 @@ previous_pir_reading = 0
 # create the table
 db_handler.create_pir_table()
 
+# create logger
+logger = my_logger.init_logger("pir_sensor.log")
+
 sql = " INSERT INTO pir(time_stamp, presence) VALUES(?,?) "
 
 if __name__ == "__main__":
@@ -25,6 +28,9 @@ if __name__ == "__main__":
 
         if pir_signal != previous_pir_reading:
 
+            logger.info(f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
+            )
+
             previous_pir_reading = pir_signal
 
             values = (int(time.time()), pir_signal)
@@ -33,8 +39,8 @@ if __name__ == "__main__":
             index = db_handler.write_db(conn, sql, values)
             conn.close()
 
-            print(
-                f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
-            )
+            # print(
+            #     f"pir_sensor -- {dt.datetime.now().isoformat()} - index_db: {index}, value: {values[1]}"
+            # )
 
         time.sleep(0.5)

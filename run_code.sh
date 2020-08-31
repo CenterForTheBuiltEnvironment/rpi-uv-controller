@@ -1,9 +1,7 @@
 #!/bin/sh
 # pull request to update files
 echo "Pull request"
-git pull &
-pid=$!
-wait $pid
+git pull
 
 # todo remove this line
 echo "Removing the database file"
