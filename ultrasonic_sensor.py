@@ -6,6 +6,8 @@ import numpy as np
 import db_handler
 
 # variables
+import my_logger
+
 time_wrote_to_db = time.time()
 logging_time = 10
 sampling_time = 0.5
@@ -22,6 +24,9 @@ previous_std = 9999
 
 # create table to store ultrasonic sensor data
 db_handler.create_ultrasonic_table()
+
+# create logger
+logger = my_logger.init_logger("ultrasonic_sensor.log")
 
 # sql statement to add new entries to table
 sql = """ INSERT INTO ultrasonic 
@@ -83,13 +88,12 @@ while True:
         # write to db
         index = db_handler.write_db(conn, sql, values)
 
-        print(
-            f"ultrasonic -- {dt.datetime.now().isoformat()} - index_db: "
-            f"{index}, dist: {distance}, std: {std}"
-        )
-
         # close connection
         conn.close()
+
+        logger.info(
+            f"ultrasonic -- {dt.datetime.now().isoformat()} -  dist: {distance}, std: {std}"
+        )
 
     # pause script
     time.sleep(sampling_time)

@@ -4,6 +4,8 @@ import db_handler
 import datetime as dt
 
 # Set warnings off (optional)
+import my_logger
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
@@ -19,9 +21,10 @@ GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 db_handler.create_button_table()
 
 # sql statement to add new entries to table
-sql = """ INSERT INTO button 
-        (time_stamp, status) 
-        VALUES(?,?) """
+sql = """ INSERT INTO button (time_stamp, status) VALUES(?,?) """
+
+# create logger
+logger = my_logger.init_logger("kill_switch.log")
 
 while True:
 
@@ -44,9 +47,8 @@ while True:
         # write to db
         index = db_handler.write_db(conn, sql, values)
 
-        print(
-            f"button -- {dt.datetime.now().isoformat()} - index_db: "
-            f"{index}, button state: {reading}"
+        logger.info(
+            f"button -- {dt.datetime.now().isoformat()} - button state: {reading}"
         )
 
         # close connection
