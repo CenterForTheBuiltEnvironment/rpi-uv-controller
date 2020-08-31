@@ -51,9 +51,9 @@ def scan_beacons():
 
                 index = db_handler.write_db(conn, sql, values)
 
-                logger.info(
-                    f"beacons -- {dt.datetime.now().isoformat()} - ble_id: {dev.addr}, rssi: {dev.rssi}"
-                )
+                # logger.info(
+                #     f"beacons -- {dt.datetime.now().isoformat()} - ble_id: {dev.addr}, rssi: {dev.rssi}"
+                # )
 
         conn.close()
 

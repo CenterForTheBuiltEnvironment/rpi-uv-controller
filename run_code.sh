@@ -1,4 +1,7 @@
 #!/bin/sh
+
+clear
+
 # pull request to update files
 echo "Pull request"
 git pull
@@ -6,6 +9,8 @@ git pull
 # todo remove this line
 echo "Removing the database file"
 rm -f database.db
+
+sleep 2
 
 echo "Starting python scripts"
 # start python scripts

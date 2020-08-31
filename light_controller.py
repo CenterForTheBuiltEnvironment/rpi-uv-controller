@@ -261,10 +261,10 @@ if __name__ == "__main__":
 
                 send_ctr_relay(signal=0, light_key=light_type)
 
-                if lights_dict[light_type]["current_state"] == 1:
-                    print(
-                        f"{dt.datetime.now().isoformat()} - " f"{light_type} turned off"
-                    )
+                # if lights_dict[light_type]["current_state"] == 1:
+                #     print(
+                #         f"{dt.datetime.now().isoformat()} - " f"{light_type} turned off"
+                #     )
 
                 lights_dict[light_type]["current_state"] = 0
 
@@ -287,9 +287,9 @@ if __name__ == "__main__":
 
                     send_ctr_relay(signal=1, light_key=light_type)
 
-                    print(
-                        f"{dt.datetime.now().isoformat()} - " f"{light_type} turned on"
-                    )
+                    # print(
+                    #     f"{dt.datetime.now().isoformat()} - " f"{light_type} turned on"
+                    # )
 
                 elif (
                     (now - lights_dict[light_type]["time_on"])
@@ -299,7 +299,7 @@ if __name__ == "__main__":
                     lights_dict[light_type]["current_state"] = 0
                     send_ctr_relay(signal=0, light_key=light_type)
 
-                    print(
+                    logger.info(
                         f"{dt.datetime.now().isoformat()} - "
                         f"{light_type} turned off since was on for too long"
                     )
