@@ -6,7 +6,7 @@ import db_handler
 import my_logger
 
 pir_pin_1 = 6
-pir_pin_2 = 3
+pir_pin_2 = 21
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pir_pin_1, GPIO.IN)  # Read output from PIR motion sensor
