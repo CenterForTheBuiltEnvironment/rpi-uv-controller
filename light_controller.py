@@ -137,7 +137,7 @@ def pir_control():
         else:
             return True
 
-    except IndexError:
+    except (IndexError, ValueError):
         return True
 
     except Error as e:
