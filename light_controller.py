@@ -121,8 +121,6 @@ def pir_control():
         )
         rows = db_handler.read_db(conn, query_last_entry_by_id)
 
-        print(rows)
-
         conn.close()
 
         presence = []
