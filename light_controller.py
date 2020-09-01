@@ -117,15 +117,22 @@ def pir_control():
 
         # query only last entry by beacon id
         query_last_entry_by_id = (
-            f"SELECT presence, time_stamp FROM pir ORDER BY time_stamp DESC LIMIT 1"
+            f"SELECT presence, MAX(time_stamp), sensor_id FROM pir GROUP BY sensor_id;"
         )
         rows = db_handler.read_db(conn, query_last_entry_by_id)
 
+        print(rows)
+
         conn.close()
 
-        presence = rows[0][0]
+        presence = []
+        time_elapsed = []
 
-        if (presence == 1) or (time.time() - rows[0][1] < VARIABLES.delay_pir):
+        for row in rows:
+            presence.append(row[0])
+            time_elapsed.append(time.time() - row[1])
+
+        if (1 in presence) or (min(time_elapsed) < VARIABLES.delay_pir):
             return False
         else:
             return True

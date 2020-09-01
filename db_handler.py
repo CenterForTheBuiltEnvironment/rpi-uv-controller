@@ -73,6 +73,7 @@ def create_pir_table():
     sql = (
         "CREATE TABLE IF NOT EXISTS pir "
         "( id integer PRIMARY KEY, "
+        "sensor_id int, "
         "time_stamp int, "
         "presence int)"
     )

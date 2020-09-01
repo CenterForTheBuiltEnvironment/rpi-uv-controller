@@ -66,7 +66,7 @@ pip install -r requirements.txt
 
 * Run the file `run_code.sh` using the following command:
 ```
-bash run_code.sh
+bash run_code.sh &
 ```
 
 This will run automatically all the Python scripts needed.
