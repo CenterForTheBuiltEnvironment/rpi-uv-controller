@@ -6,14 +6,16 @@ clear
 echo "Pull request"
 git pull
 
+. venv/bin/activate
+
 sleep 2
 
 echo "Starting python scripts"
 # start python scripts
-sudo python3 beacon_scanner.py &
-sudo python3 pir_sensor.py &
-sudo python3 ultrasonic_sensor.py &
-sudo python3 kill_switch.py &
+#sudo python3 beacon_scanner.py &
+#sudo python3 pir_sensor.py &
+#sudo python3 ultrasonic_sensor.py &
+#sudo python3 kill_switch.py &
 
 sleep 10
 
