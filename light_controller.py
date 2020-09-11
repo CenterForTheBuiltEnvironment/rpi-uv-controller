@@ -260,7 +260,7 @@ def control_room_light():
 
 def write_control_to_db(_values):
     # write control signal to database
-    connection = db_handler.connect_db(_values)
+    connection = db_handler.connect_db()
 
     sql = (
         " INSERT INTO control_signals(time_stamp, sensor, light_type, "
