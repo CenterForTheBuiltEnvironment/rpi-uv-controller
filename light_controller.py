@@ -39,6 +39,16 @@ lights_dict = {
     },
 }
 
+room_light = {
+    "current_state": 0,
+    "time_on": 0,
+    "max_time_on": VARIABLES.max_time_on_lights_top,
+    "hours_on": VARIABLES.hours_on,
+    "days_on": VARIABLES.days_on,
+    "pin": 22,
+    "completed_hourly_cycle": 0,  # hour number when cycle completed
+}
+
 all_off_light_pin = 13
 
 # set up board configuration RPI
@@ -49,6 +59,7 @@ GPIO.setmode(GPIO.BCM)
 # set pin role
 GPIO.setup(lights_dict["desk"]["pin"], GPIO.OUT)  # green
 GPIO.setup(lights_dict["top"]["pin"], GPIO.OUT)  # yellow
+GPIO.setup(room_light["pin"], GPIO.OUT)  # yellow
 GPIO.setup(all_off_light_pin, GPIO.OUT)  # red
 
 # wait for few seconds before the script starts so sensors can start collecting data
@@ -205,9 +216,73 @@ def send_ctr_relay(signal=0, light_key="top"):
     GPIO.output(lights_dict[light_key]["pin"], signal)
 
 
+def control_room_light():
+    _now = dt.datetime.now()
+
+    if (
+        (_now.weekday() in room_light["days_on"])
+        and (_now.hour in room_light["hours_on"])
+        and (_now.hour != room_light["completed_hourly_cycle"])
+    ):
+
+        if room_light["current_state"] == 0:  # light was off
+
+            GPIO.output(room_light["pin"], 1)  # turn on light
+
+            room_light["time_on"] = time.time()
+            room_light["current_state"] = 1
+
+            _values = (
+                int(time.time()),
+                "timer",
+                "room",
+                1,
+            )
+
+            write_control_to_db(_values)
+
+        elif time.time() - room_light["time_on"] > room_light["max_time_on"]:
+
+            GPIO.output(room_light["pin"], 0)  # turn on light
+
+            room_light["current_state"] = 0
+            room_light["completed_hourly_cycle"] = _now.hour
+
+            _values = (
+                int(time.time()),
+                "timer",
+                "room",
+                0,
+            )
+
+            write_control_to_db(_values)
+
+
+def write_control_to_db(_values):
+    # write control signal to database
+    connection = db_handler.connect_db(_values)
+
+    sql = (
+        " INSERT INTO control_signals(time_stamp, sensor, light_type, "
+        "signal) "
+        "VALUES(?,?,?,?) "
+    )
+
+    db_handler.write_db(connection, sql, _values)
+
+    connection.close()
+
+    logger.info(
+        f"light control -- {dt.datetime.now().isoformat()} - light: "
+        f"{_values[2]}, light_state: {_values[3]}"
+    )
+
+
 if __name__ == "__main__":
 
     db_handler.create_controller_table()
+
+    control_room_light()
 
     while True:
 
@@ -224,6 +299,7 @@ if __name__ == "__main__":
 
                 if ctr_pir:
 
+                    # this variable specifies which sensor controlled the light
                     sensor = "beacon"
 
                     # control desk light
@@ -232,7 +308,7 @@ if __name__ == "__main__":
                     # control top light
                     lights_dict["top"]["ctr_signal"] = int(ctr_beacon["top"])
 
-                # turn of the lights if pir detected occupancy
+                # turn off the lights if pir detected occupancy
                 else:
 
                     sensor = "pir"
@@ -241,7 +317,7 @@ if __name__ == "__main__":
 
                         lights_dict[light_type]["ctr_signal"] = 0
 
-            # turn of the lights if ultrasonic detected motion
+            # turn off the lights if ultrasonic detected motion
             else:
 
                 sensor = "ultrasonic"
@@ -250,7 +326,7 @@ if __name__ == "__main__":
 
                     lights_dict[light_type]["ctr_signal"] = 0
 
-        # turn of the lights if kill switch was pressed
+        # turn off the lights if kill switch was pressed
         else:
 
             sensor = "switch"
@@ -265,11 +341,6 @@ if __name__ == "__main__":
             if lights_dict[light_type]["ctr_signal"] == 0:
 
                 send_ctr_relay(signal=0, light_key=light_type)
-
-                # if lights_dict[light_type]["current_state"] == 1:
-                #     print(
-                #         f"{dt.datetime.now().isoformat()} - " f"{light_type} turned off"
-                #     )
 
                 lights_dict[light_type]["current_state"] = 0
 
@@ -337,27 +408,13 @@ if __name__ == "__main__":
 
                 lights_dict[light_type]["previous_state"] = light_info["current_state"]
 
-                # write control signal to database
-                connection = db_handler.connect_db()
-
                 values = (
                     int(time.time()),
                     sensor,
                     light_type,
                     light_info["current_state"],
                 )
-                sql = (
-                    " INSERT INTO control_signals(time_stamp, sensor, light_type, signal) "
-                    "VALUES(?,?,?,?) "
-                )
-                row_index = db_handler.write_db(connection, sql, values)
 
-                connection.close()
-
-                logger.info(
-                    f"light control -- {dt.datetime.now().isoformat()} - light: {light_type}, light_state: {light_info['current_state']}"
-                )
-
-        # todo clear control_signals table every week
+                write_control_to_db(values)
 
         time.sleep(1)

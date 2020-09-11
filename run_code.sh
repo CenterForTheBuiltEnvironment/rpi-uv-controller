@@ -6,10 +6,6 @@ clear
 echo "Pull request"
 git pull
 
-# todo remove this line
-echo "Removing the database file"
-rm -f database.db
-
 sleep 2
 
 echo "Starting python scripts"
@@ -21,5 +17,6 @@ sudo python3 kill_switch.py &
 
 sleep 10
 
+echo "Starting light controller code"
 # start controller
 sudo python3 light_controller.py &
