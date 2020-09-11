@@ -156,59 +156,63 @@ def pir_control():
 
 def beacons_control():
 
-    # query the last entries
-    conn = db_handler.connect_db()
+    try:
+        # query the last entries
+        conn = db_handler.connect_db()
 
-    # query only last entry by beacon id
-    query_last_entry_by_id = (
-        "SELECT device_id, rssi, MAX(time_stamp) FROM beacons GROUP BY device_id;"
-    )
-    rows = db_handler.read_db(conn, query_last_entry_by_id)
+        # query only last entry by beacon id
+        query_last_entry_by_id = (
+            "SELECT device_id, rssi, MAX(time_stamp) FROM beacons GROUP BY device_id;"
+        )
+        rows = db_handler.read_db(conn, query_last_entry_by_id)
 
-    conn.close()
+        conn.close()
 
-    zeros_array = np.zeros(len(rows))
-    zeros_array[:] = False
+        zeros_array = np.zeros(len(rows))
+        zeros_array[:] = False
 
-    top_light_beacon_array = zeros_array.copy()
-    desk_light_beacon_array = zeros_array.copy()
+        top_light_beacon_array = zeros_array.copy()
+        desk_light_beacon_array = zeros_array.copy()
 
-    for index, row in enumerate(rows):
+        for index, row in enumerate(rows):
 
-        # check that the index is among those to track
-        if row[0] in VARIABLES.beacons_to_track.keys():
+            # check that the index is among those to track
+            if row[0] in VARIABLES.beacons_to_track.keys():
 
-            # check against time threshold
-            if time.time() - row[2] < VARIABLES.delay_beacons:
+                # check against time threshold
+                if time.time() - row[2] < VARIABLES.delay_beacons:
 
-                # if not enough time has elapsed check signal strength
-                if row[1] < VARIABLES.beacons_to_track[row[0]]:
+                    # if not enough time has elapsed check signal strength
+                    if row[1] < VARIABLES.beacons_to_track[row[0]]:
+
+                        top_light_beacon_array[index] = True
+
+                # if the threshold time has elapsed
+                else:
 
                     top_light_beacon_array[index] = True
+                    desk_light_beacon_array[index] = True
 
-            # if the threshold time has elapsed
+            # since I am not controlling for this beacon
             else:
 
                 top_light_beacon_array[index] = True
                 desk_light_beacon_array[index] = True
 
-        # since I am not controlling for this beacon
+        if False in top_light_beacon_array:
+            top_light_control = False
         else:
+            top_light_control = True
 
-            top_light_beacon_array[index] = True
-            desk_light_beacon_array[index] = True
+        if False in desk_light_beacon_array:
+            desk_light_control = False
+        else:
+            desk_light_control = True
 
-    if False in top_light_beacon_array:
-        top_light_control = False
-    else:
-        top_light_control = True
+        return {"top": top_light_control, "desk": desk_light_control}
 
-    if False in desk_light_beacon_array:
-        desk_light_control = False
-    else:
-        desk_light_control = True
-
-    return {"top": top_light_control, "desk": desk_light_control}
+    except Error:
+        return {"top": True, "desk": True}
 
 
 def send_ctr_relay(signal=0, light_key="top"):
