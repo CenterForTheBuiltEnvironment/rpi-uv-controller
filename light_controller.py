@@ -42,7 +42,7 @@ lights_dict = {
 room_light = {
     "current_state": 0,
     "time_on": 0,
-    "max_time_on": VARIABLES.max_time_on_lights_top,
+    "max_time_on": VARIABLES.max_time_on_lights_room,
     "hours_on": VARIABLES.hours_on,
     "days_on": VARIABLES.days_on,
     "pin": 22,
