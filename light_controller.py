@@ -223,11 +223,16 @@ def send_ctr_relay(signal=0, light_key="top"):
 def control_room_light():
     _now = dt.datetime.now()
 
+    print("control room")
+
     if (
         (_now.weekday() in room_light["days_on"])
         and (_now.hour in room_light["hours_on"])
         and (_now.hour != room_light["completed_hourly_cycle"])
     ):
+
+        print("first if")
+        print(time.time() - room_light["time_on"], room_light["max_time_on"])
 
         if room_light["current_state"] == 0:  # light was off
 
