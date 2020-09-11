@@ -286,9 +286,9 @@ if __name__ == "__main__":
 
     db_handler.create_controller_table()
 
-    control_room_light()
-
     while True:
+
+        control_room_light()
 
         # get the control signal from each sensor
         ctr_beacon = beacons_control()
