@@ -4,7 +4,10 @@ This Python file contains all the variables that can be changed. Please refer to
 
 # dictionary of beacons to track
 beacons_to_track = {
-    "da:f7:89:c4:54:5f": -75,
+    "da:f7:89:c4:54:5f": -40,
+    "f3:d8:17:3f:fd:9c": -40,
+    "f4:d9:18:40:fe:9d": -40,
+    "f0:d5:14:3c:fa:99": -40,
 }
 
 # time after which lights turn on after last occupancy was detected by the relative sensor
