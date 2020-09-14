@@ -16,9 +16,9 @@ delay_pir = 1 * 60
 delay_kill_switch = 1 * 60
 
 # max time lights can stay on after person leaves the space
-max_time_on_lights_top = 20 * 60
-max_time_on_lights_desk = 20 * 60
-max_time_on_lights_room = 20 * 60
+max_time_on_lights_top = 10 * 60  # in reality is desk
+max_time_on_lights_desk = 20 * 60  # ceiling light
+max_time_on_lights_room = 10 * 60  # is actually room
 
 # room light variables
 hours_on = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
