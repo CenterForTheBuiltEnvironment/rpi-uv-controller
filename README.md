@@ -94,7 +94,7 @@ sudo pkill -f <name_python_file>
 ## How to access the PI remotely
 You can SSH into the PI if you are connected to the same Wi-Fi network by using the following command
 ```
-ssh pi@<IP address PI>
+ssh pi@10.25.174.66
 ```
 
 ## How to commit and push new local changes to GitHub
