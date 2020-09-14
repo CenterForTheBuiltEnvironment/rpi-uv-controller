@@ -103,3 +103,23 @@ git add .
 git commit -m "your commmit message"
 git push
 ```
+
+## How to analyse the control signal data
+You need to first SSH into the pi. Then type the following commands to update the csv file and push it to GitHub
+```
+cd Desktop/rpi-uv-controller
+python3 db_handler.py
+
+git add .
+git commit -m "your commmit message"
+git push
+```
+
+Then on your computer open anaconda, navigate to the `rpi-uv-controller` folder and type:
+```
+git pull
+python3 control_signals_analysis/analyze_control_signals.py
+```
+
+This should generate the chart.
+
