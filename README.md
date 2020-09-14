@@ -90,3 +90,16 @@ sudo pkill -f <name_python_file>
 ```
 * install the new package
 * use `pipreqs` to generate `requirements.txt` file, alternatively manually add new package to `requirements.txt`
+
+## How to access the PI remotely
+You can SSH into the PI if you are connected to the same Wi-Fi network by using the following command
+```
+ssh pi@<IP address PI>
+```
+
+## How to commit and push new local changes to GitHub
+```
+git add .
+git commit -m "your commmit message"
+git push
+```
