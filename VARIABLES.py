@@ -15,7 +15,7 @@ min_time_off = 5 * 60
 
 # time after which lights turn on after last occupancy was detected by the relative sensor
 delay_beacons = 1 * 60
-delay_pir = 1 * 60
+delay_pir = 2 * 60
 delay_kill_switch = 1 * 60
 
 # max time lights can stay on after person leaves the space
