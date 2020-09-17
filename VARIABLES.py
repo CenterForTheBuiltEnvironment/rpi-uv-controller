@@ -10,6 +10,9 @@ beacons_to_track = {
     "f0:d5:14:3c:fa:99": -65,
 }
 
+# minimum time that the light need to stay off, to prevent that the light fails
+min_time_off = 5 * 60
+
 # time after which lights turn on after last occupancy was detected by the relative sensor
 delay_beacons = 1 * 60
 delay_pir = 2 * 60
