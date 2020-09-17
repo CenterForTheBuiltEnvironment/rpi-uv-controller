@@ -23,6 +23,7 @@ lights_dict = {
         "current_state": 0,
         "previous_state": 0,
         "time_on": 0,
+        "time_off": 0,
         "max_time_on": VARIABLES.max_time_on_lights_top,
         "pin": 19,
         "ctr_signal": 0,
@@ -32,6 +33,7 @@ lights_dict = {
         "current_state": 0,
         "previous_state": 0,
         "time_on": 0,
+        "time_off": 0,
         "max_time_on": VARIABLES.max_time_on_lights_desk,
         "pin": 26,
         "ctr_signal": 0,
@@ -42,6 +44,7 @@ lights_dict = {
 room_light = {
     "current_state": 0,
     "time_on": 0,
+    "time_off": 0,
     "max_time_on": VARIABLES.max_time_on_lights_room,
     "hours_on": VARIABLES.hours_on,
     "days_on": VARIABLES.days_on,
@@ -358,15 +361,17 @@ if __name__ == "__main__":
             # function that decides whether or not lights needs to be turned on
             if lights_dict[light_type]["occupancy_detected"]:
 
+                # turn on light if it can turn on, it was off and was off for long enough
                 if (lights_dict[light_type]["ctr_signal"] == 1) and (
                     lights_dict[light_type]["current_state"] == 0
-                ):
+                ) and (now - lights_dict[light_type]["time_off"] > VARIABLES.min_time_off):
 
                     lights_dict[light_type]["current_state"] = 1
                     lights_dict[light_type]["time_on"] = now
 
                     send_ctr_relay(signal=1, light_key=light_type)
 
+                # turn off light since it was on for too long
                 elif (
                     (now - lights_dict[light_type]["time_on"])
                     > lights_dict[light_type]["max_time_on"]
