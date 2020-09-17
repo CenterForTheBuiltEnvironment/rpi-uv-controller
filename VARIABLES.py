@@ -4,14 +4,14 @@ This Python file contains all the variables that can be changed. Please refer to
 
 # dictionary of beacons to track
 beacons_to_track = {
-    "da:f7:89:c4:54:5f": -50,
-    "f3:d8:17:3f:fd:9c": -50,
-    "f4:d9:18:40:fe:9d": -50,
-    "f0:d5:14:3c:fa:99": -50,
+    "da:f7:89:c4:54:5f": -55,
+    "f3:d8:17:3f:fd:9c": -55,
+    "f4:d9:18:40:fe:9d": -55,
+    "f0:d5:14:3c:fa:99": -55,
 }
 
 # minimum time that the light need to stay off, to prevent that the light fails
-min_time_off = 2 * 60
+min_time_off = 5 * 60
 
 # time after which lights turn on after last occupancy was detected by the relative sensor
 delay_beacons = 1 * 60
@@ -31,4 +31,4 @@ days_on = [0, 1, 2, 3, 4]  # where 0 is Monday
 threshold_ultrasonic_std = 0.01  # calculated using data collected by Federico
 
 # other variables (all times are in seconds)
-beacon_scanning_interval = 10.0  # amount of seconds the RPI scans for beacons
+beacon_scanning_interval = 3.0  # amount of seconds the RPI scans for beacons
