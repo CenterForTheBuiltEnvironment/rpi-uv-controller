@@ -37,7 +37,7 @@ sql = """ INSERT INTO ultrasonic
 distances = []
 
 # initialize the sensor
-ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=2)
+ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=3.5)
 
 while True:
 
