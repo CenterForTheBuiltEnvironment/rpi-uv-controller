@@ -37,7 +37,7 @@ sql = """ INSERT INTO ultrasonic
 distances = []
 
 # initialize the sensor
-ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=3.5)
+ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=2.5)
 
 while True:
 
@@ -47,8 +47,8 @@ while True:
     # append to the array of previously measured distances
     distances.append(distance)
 
-    # wait until I have three minutes of data
-    if len(distances) > 60 / sampling_time * 3:
+    # wait until I have two minutes of data
+    if len(distances) > 60 / sampling_time * 2:
 
         # delete first entry
         del distances[0]
