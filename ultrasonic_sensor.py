@@ -4,6 +4,7 @@ import datetime as dt
 import numpy as np
 
 import db_handler
+import VARIABLES
 
 # variables
 import my_logger
@@ -37,7 +38,7 @@ sql = """ INSERT INTO ultrasonic
 distances = []
 
 # initialize the sensor
-ultrasonic = DistanceSensor(echo=17, trigger=4, max_distance=2.5)
+ultrasonic = DistanceSensor(echo=VARIABLES.pir_ultrasonic_echo, trigger=VARIABLES.pir_ultrasonic_trigger, max_distance=2.5)
 
 while True:
 

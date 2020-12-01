@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import db_handler
 import datetime as dt
+import VARIABLES
 
 # Set warnings off (optional)
 import my_logger
@@ -10,7 +11,7 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
 # Set Button and LED pins
-button_pin = 2
+button_pin = VARIABLES.pin_manual_switch
 
 previous_state = 0
 

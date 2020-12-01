@@ -8,6 +8,13 @@ beacons_to_track = {
     "df:f8:6e:f6:b9:95": -50,
 }
 
+# pins
+pin_manual_switch = 2
+pin_pir_1 = 6
+pin_pir_2 = 21
+pir_ultrasonic_echo = 17
+pir_ultrasonic_trigger = 4
+
 # minimum time that the light need to stay off, to prevent that the light fails
 min_time_off = 1 * 60
 

@@ -2,11 +2,12 @@ import RPi.GPIO as GPIO
 import time
 import datetime as dt
 
+import VARIABLES
 import db_handler
 import my_logger
 
-pir_pin_1 = 6
-pir_pin_2 = 21
+pir_pin_1 = VARIABLES.pin_pir_1
+pir_pin_2 = VARIABLES.pin_pir_2
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pir_pin_1, GPIO.IN)  # Read output from PIR motion sensor
