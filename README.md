@@ -18,7 +18,7 @@ Only after occupancy is not detected for a predefined amount of time (see sectio
 
 ## Project schematic
 
-![alt text](https://github.com/FedericoTartarini/rpi-uv-controller/tree/master/images/schematic.png)
+![schematic](https://github.com/FedericoTartarini/rpi-uv-controller/blob/master/images/schematic.png)
 
 If you wire the sensors as shown in the image above please change the variables in the `VARIABLES.py` file as follows:
 
