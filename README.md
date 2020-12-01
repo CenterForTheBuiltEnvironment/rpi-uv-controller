@@ -7,6 +7,19 @@ This repository contains the code to automatically control the UV lights in a sp
 * ultrasonic sensor
 * manual switch
 
+## Table of content 
+
+-   [Project functionalities](#project-functionalities)
+-   [Project schematic](#project-schematic)
+    -   [Pins](#pins)
+    -   [Parts](#parts)
+-   [Variables](#variables)
+-   [How to get started](#how-to-get-started)
+-   [How to access the PI remotely](#how-to-access-the-pi-remotely)
+-   [How to analyse the control signal data](#how-to-analyse-the-control-signal-data)
+
+## Project functionalities
+
 In a nutshell the control logic works as follows:
 
 * if the kill switch was not pressed; and
@@ -23,6 +36,7 @@ Only after occupancy is not detected for a predefined amount of time (see sectio
 If you wire the sensors as shown in the image above please change the variables in the `VARIABLES.py` file as follows:
 
 ### pins
+```
 pin_manual_switch = 22
 pin_pir_1 = 27
 pin_pir_2 = 18
@@ -31,8 +45,9 @@ pin_ultrasonic_trigger = 17
 pin_light_desk = 10
 pin_light_room = 24
 pin_light_top = 23
+```
 
-## Parts
+### Parts
 
 Below a list of all the parts needed and their estimated cost.
 
@@ -52,7 +67,7 @@ Below a list of all the parts needed and their estimated cost.
 | Jumper Wires Pack - M/M | $1.95 | 1 |
 | Jumper Wires Pack - M/F | $1.95 | 1 |
 
-## Parameters (variables) that can be changed
+## Variables
 
 You can change them by editing the file `VARIABLES.py`.
 
