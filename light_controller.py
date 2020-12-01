@@ -25,7 +25,7 @@ lights_dict = {
         "time_on": 0,
         "time_off": 0,
         "max_time_on": VARIABLES.max_time_on_lights_top,
-        "pin": 19,
+        "pin": VARIABLES.pin_light_top,
         "ctr_signal": 0,
         "occupancy_detected": True,
     },
@@ -35,7 +35,7 @@ lights_dict = {
         "time_on": 0,
         "time_off": 0,
         "max_time_on": VARIABLES.max_time_on_lights_desk,
-        "pin": 26,
+        "pin": VARIABLES.pin_light_desk,
         "ctr_signal": 0,
         "occupancy_detected": True,
     },
@@ -48,7 +48,7 @@ room_light = {
     "max_time_on": VARIABLES.max_time_on_lights_room,
     "hours_on": VARIABLES.hours_on,
     "days_on": VARIABLES.days_on,
-    "pin": 22,
+    "pin": VARIABLES.pin_light_room,
     "completed_hourly_cycle": 0,  # hour number when cycle completed
 }
 

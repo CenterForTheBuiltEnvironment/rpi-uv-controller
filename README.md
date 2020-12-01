@@ -16,9 +16,47 @@ In a nutshell the control logic works as follows:
 
 Only after occupancy is not detected for a predefined amount of time (see section below to change these values) which can be set differently for each sensor. Then the RPI turns on the lights based on the above mentioned control logic. Light can stay on only for a predefined amount of time after which they automatically turn off. Light will turn on again either at midnight (each day) or after that a person enter and then leaves the space. 
 
+## Project schematic
+
+![alt text](https://github.com/FedericoTartarini/rpi-uv-controller/tree/master/images/schematic.png)
+
+If you wire the sensors as shown in the image above please change the variables in the `VARIABLES.py` file as follows:
+
+### pins
+pin_manual_switch = 22
+pin_pir_1 = 27
+pin_pir_2 = 18
+pin_ultrasonic_echo = 4
+pin_ultrasonic_trigger = 17
+pin_light_desk = 10
+pin_light_room = 24
+pin_light_top = 23
+
+## Parts
+
+Below a list of all the parts needed and their estimated cost.
+
+| Command | Unit price | Quantity |
+| --- | --- | --- |
+| BreadBoard - Half Size | $4.5 | 1 |
+| BLE beacon | $20 | 1 |
+| Raspberry Pi 3 or 4 | $40 | 1 |
+| Relay Module 4-Ch | $2.69 | 1 |
+| PIR (motion) sensor | $9.95 | 2 |
+| USB micro-B Cable - 6 Foot | $2.98 | 1 |
+| Ultrasonic Sensor - HC-SR04 | $3.95 | 1 |
+| 470 Ohm Resistor | $0.1 | 1 |
+| 1K Ohm Resistor | $0.1 | 1 |
+| Mini Pushbutton Switch | $0.1 | 1 |
+| 10K Ohm Resistor | $0.1 | 1 |
+| Jumper Wires Pack - M/M | $1.95 | 1 |
+| Jumper Wires Pack - M/F | $1.95 | 1 |
+
 ## Parameters (variables) that can be changed
 
 You can change them by editing the file `VARIABLES.py`.
+
+Please also change the pin numbers in this file if you are connecting the sensors as shown in the schematic image.
 
 ### beacons_to_track
 
@@ -26,7 +64,7 @@ Is a dictionary of all the the Beacons that the RPI needs to track.
 
 **The ids of the beacons should be lowercase!**
 
-The keys are the beacon ids, while the values are the rssi threshold for that beacon. This treshold is used to turn on the top lights. Note that rssi values are always negative values, with decreasing values as the beacon moves away from the RPI.
+The keys are the beacon ids, while the values are the rssi threshold for that beacon. This threshold is used to turn on the top lights. Note that rssi values are always negative values, with decreasing values as the beacon moves away from the RPI.
 
 ### other variables
 

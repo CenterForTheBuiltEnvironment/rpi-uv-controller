@@ -12,8 +12,11 @@ beacons_to_track = {
 pin_manual_switch = 2
 pin_pir_1 = 6
 pin_pir_2 = 21
-pir_ultrasonic_echo = 17
-pir_ultrasonic_trigger = 4
+pin_ultrasonic_echo = 17
+pin_ultrasonic_trigger = 4
+pin_light_desk = 26
+pin_light_room = 22
+pin_light_top = 19
 
 # minimum time that the light need to stay off, to prevent that the light fails
 min_time_off = 1 * 60
